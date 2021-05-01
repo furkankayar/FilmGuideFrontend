@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div class="container" id="app">
     <navigation></navigation>
     <section class="main">
       <transition name="fade" @after-leave="afterLeave">
@@ -63,6 +63,9 @@ img{
   max-width: 100%;
   height: auto;
 }
+
+
+
 .loader{
   animation: load 1s linear infinite;
   border: 2px solid $c-white;

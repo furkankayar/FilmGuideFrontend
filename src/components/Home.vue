@@ -38,7 +38,7 @@ export default {
     background-position: 50% 50%;
     position: relative;
     background-color: $c-dark;
-    background-image: url('~assets/the-matrix.jpg');
+    background-image: url('~assets/pulp-fiction.jpg');
     @include tablet-min{
       height: 384px;
     }

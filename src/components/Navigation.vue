@@ -1,79 +1,73 @@
 <template>
   <nav class="nav">
-    <router-link
-      class="nav__logo"
-      :to="{ name: 'home' }"
-      exact
-      title="Film Guide App"
-    >
-      <svg class="nav__logo-image">
-        <use xlink:href="#svgLogo"></use>
-      </svg>
+    <router-link class="nav__logo" :to="{ name: 'home' }" exact title="Film Guide App">
+        <svg class="nav__logo-image">
+            <use xlink:href="#svgLogo"></use>
+        </svg>
     </router-link>
     <div class="nav__hamburger" @click="toggleNav">
       <div class="bar"></div>
       <div class="bar"></div>
       <div class="bar"></div>
     </div>
-    <ul class="nav__list">
-      <li class="nav__item" v-for="item in listTypes" v-if="item.isCategory">
-        <router-link
-          class="nav__link"
-          :to="{ name: 'home-category', params: { category: item.query } }"
-        >
-          <div class="nav__link-wrap">
-            <svg class="nav__link-icon">
-              <use :xlink:href="'#icon_' + item.query"></use>
-            </svg>
-            <span class="nav__link-title">{{ item.shortTitle }}</span>
-          </div>
-        </router-link>
-      </li>
-       <div class="login-status" v-if="!userLoggedIn">
-           <ul class="list">
-        <li class="nav__item">
-        <router-link
-          class="nav__link" :to="{name: 'profile'}" 
-        >
-          <div class="nav__link-wrap">
-            <svg class="nav__link-icon">
-              <use :xlink:href="'#iconLogin'"></use>
-            </svg>
-            <span class="nav__link-title">Log In</span>
-          </div>
-        </router-link>
-      </li>
-      <li class="nav__item">
-        <router-link
-          class="nav__link" :to="{name: 'profile'}" 
-        >
-          <div class="nav__link-wrap">
-            <svg class="nav__link-icon">
-              <use :xlink:href="'#iconLogin'"></use>
-            </svg>
-            <span class="nav__link-title">Register</span>
-          </div>
-        </router-link>
-      </li>
-           </ul>
-       </div> 
-       <div class="login-status" v-if="userLoggedIn">
-       <ul class="list">
-        <li class="nav__item">
-        <router-link
-          class="nav__link" :to="{name: 'profile'}" 
-        >
-          <div class="nav__link-wrap">
-            <svg class="nav__link-icon">
-              <use :xlink:href="'#iconLogin'"></use>
-            </svg>
-            <span class="nav__link-title">Profile</span>
-          </div>
-        </router-link>
-      </li>
-       </ul>
-       </div>
-       
+    <div class="nav__left">
+        <ul class="nav__list">
+            <li class="nav__item" v-for="item in listTypes" v-if="item.isCategory">
+                <router-link class="nav__link" :to="{ name: 'home-category', params: { category: item.query } }">
+                    <div class="nav__link-wrap">
+                        <svg class="nav__link-icon">
+                            <use :xlink:href="'#icon_' + item.query"></use>
+                        </svg>
+                        <span class="nav__link-title">{{ item.shortTitle }}</span>
+                    </div>
+                 </router-link>
+            </li>
+        </ul>
+    </div>
+    <div class="nav__center">
+        <input class="nav__center-input" type="text" v-model.trim="searchQuery" @keyup.enter="search" @blur="search" placeholder="Search for a movie...">
+        <svg class="nav__center-icon">
+          <use xlink:href="#iconSearch"></use>
+        </svg>
+    </div>
+    <div class="nav__right" v-if="!userLoggedIn">
+        <ul class="nav__right-list">
+            <li class="nav__item">
+                <router-link class="nav__link" :to="{name: 'profile'}" >
+                    <div class="nav__link-wrap">
+                        <svg class="nav__link-icon">
+                            <use :xlink:href="'#iconLogin'"></use>
+                        </svg>
+                        <span class="nav__link-title">Log In</span>
+                    </div>
+                </router-link>
+            </li>
+            <li class="nav__item">
+                <router-link class="nav__link" :to="{name: 'profile'}" >
+                    <div class="nav__link-wrap">
+                        <svg class="nav__link-icon">
+                            <use :xlink:href="'#iconLogin'"></use>
+                        </svg>
+                        <span class="nav__link-title">Register</span>
+                    </div>
+                </router-link>
+            </li>
+        </ul>
+    </div> 
+    <div class="nav__right" v-if="userLoggedIn">
+        <ul class="nav__right-list">
+            <li class="nav__item">
+                <router-link class="nav__link" :to="{name: 'profile'}" >
+                    <div class="nav__link-wrap">
+                        <svg class="nav__link-icon">
+                            <use :xlink:href="'#iconLogin'"></use>
+                        </svg>
+                        <span class="nav__link-title">Profile</span>
+                    </div>
+                </router-link>
+            </li>
+        </ul>
+    </div>   
       <!--<li class="nav__item nav__item--profile">
         <div  class="nav__link nav__link--profile"  @click="requestToken" v-if="!userLoggedIn">
           <div class="nav__link-wrap">
@@ -92,7 +86,6 @@
           </div>
         </router-link>
       </li>-->
-    </ul>
   </nav>
 </template>
 
@@ -114,6 +107,7 @@ export default {
       document
         .querySelector(".nav__list")
         .classList.toggle("nav__list--active");
+      document.querySelector(".nav__right-list").classList.toggle("nav__right-list--active");
     },
   },
 };
@@ -124,24 +118,6 @@ export default {
 @import "./src/scss/variables";
 @import "./src/scss/media-queries";
 
-.login-status{
-    position: fixed;
-    right: 0;
-    top: 0;
-    text-align: center;
-    height: 84px;
-    @include mobile_only{
-        position: relative;
-    }
-    
-}
-
-.login-status .list{
-    display: flex;
-    padding: 0;
-    list-style: none;
-
-}
 
 .nav {
   position: fixed;
@@ -151,15 +127,116 @@ export default {
   height: 50px;
   background: $c-dark-blue;
   display: flex;
+  margin-left: 10px;
   z-index: 10;
   @include tablet-min {
     width: 100%;
     height: 75px;
+    margin-left: 20px;
+  }
+  &__left {
+      float: left;
+  }
+  &__right {
+      float: right;
+      text-align: center;
+      right: 0;
+      top: 0;
+      margin-right: 20px;
+      height: 75px;
+      @include mobile_only{
+        position: relative;
+      }
+      &-list{
+        margin: 0;
+        display: flex;
+        padding: 0;
+        list-style: none;
+        @include mobile-only {
+            font-size: 0;
+            opacity: 0;
+            left: 0;
+            top: 218px;
+            position: fixed;
+            width: 100%;
+            visibility: hidden;
+            transition: all 0.5s ease;
+            text-align: left;
+            &--active {
+                opacity: 1;
+                visibility: visible;
+            }
+        }
+      }
+  }
+  &__center {
+    height: 50px;
+    width: 100%;
+    display: flex;
+    z-index: 5;
+    @include tablet-min{
+      position: relative;
+      height: 75px;
+      right: 0;
+    }
+    @include mobile_only{
+        width: calc(100% - 110px);
+        position: fixed;
+        top: 0;
+        right: 55px;
+    }
+    &-input{
+      display: block;
+      width: 100%;
+      padding: 15px 20px 15px 45px;
+      outline: none;
+      border: 0;
+      background-color: transparent;
+      color: $c-light;
+      font-weight: 300;
+      font-size: 16px;
+      @include tablet-min{
+        padding: 15px 30px 15px 60px;
+      }
+      @include tablet-landscape-min{
+        padding: 15px 30px 15px 80px;
+      }
+      @include desktop-min{
+        padding: 15px 30px 15px 90px;
+      }
+    }
+    &-icon{
+      width: 14px;
+      height: 14px;
+      fill: rgba($c-light, 1);
+      transition: fill 0.5s ease;
+      pointer-events: none;
+      position: absolute;
+      top: 50%;
+      margin-top: -7px;
+      left: 20px;
+      @include tablet-min{
+        width: 18px;
+        height: 18px;
+        margin-top: -9px;
+        left: 30px;
+      }
+      @include tablet-landscape-min{
+        left: 50px;
+      }
+      @include desktop-min{
+        left: 60px;
+      }
+    }
+    &-input:focus + &-icon{
+      fill: $c-light;
+    }
   }
   &__logo {
     display: block;
     width: 55px;
     height: 50px;
+    margin-right: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -278,10 +355,6 @@ export default {
     }
     @include tablet-min {
       &--right {
-        position: fixed;
-        right: 0;
-        top: 0;
-        width: 75px;
         height: 75px;
         border-bottom: 0;
       }
