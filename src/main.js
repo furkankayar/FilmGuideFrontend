@@ -5,6 +5,8 @@ import router from './routes'
 
 import App from './App.vue'
 
+
+
 window.eventHub = new Vue();
 
 Vue.use(VueRouter, axios); 
