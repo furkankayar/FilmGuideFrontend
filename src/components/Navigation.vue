@@ -33,24 +33,24 @@
     <div class="nav__right" v-if="!userLoggedIn">
         <ul class="nav__right-list">
             <li class="nav__item">
-                <router-link class="nav__link" :to="{name: 'profile'}" >
+                <a class="nav__link" :href="'/'" @click.prevent="openLoginPopup()" >
                     <div class="nav__link-wrap">
                         <svg class="nav__link-icon">
                             <use :xlink:href="'#iconLogin'"></use>
                         </svg>
                         <span class="nav__link-title">Log In</span>
                     </div>
-                </router-link>
+                </a>
             </li>
             <li class="nav__item">
-                <router-link class="nav__link" :to="{name: 'profile'}" >
+                <a  class="nav__link" :to="{name: 'profile'}" >
                     <div class="nav__link-wrap">
                         <svg class="nav__link-icon">
                             <use :xlink:href="'#iconLogin'"></use>
                         </svg>
                         <span class="nav__link-title">Register</span>
                     </div>
-                </router-link>
+                </a>
             </li>
         </ul>
     </div> 
@@ -109,6 +109,10 @@ export default {
         .classList.toggle("nav__list--active");
       document.querySelector(".nav__right-list").classList.toggle("nav__right-list--active");
     },
+    openLoginPopup(){
+        console.log('open');
+        eventHub.$emit('openLoginPopup');
+    }
   },
 };
 </script>
@@ -351,6 +355,7 @@ export default {
     @include mobile-only {
       display: inline-block;
       text-align: center;
+      background: $c-dark-blue;
       width: 50%;
     }
     @include tablet-min {

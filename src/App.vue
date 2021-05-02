@@ -1,6 +1,9 @@
 <template>
   <div class="container" id="app">
     <navigation></navigation>
+
+    <login-popup v-if="loginPopupIsVisible" @close="closeLoginPopup"></login-popup>
+
     <section class="main">
       <transition name="fade" @after-leave="afterLeave">
         <router-view name="list-router-view" :type="'page'" :mode="'collection'" :key="$route.params.category"></router-view>
@@ -11,11 +14,17 @@
 
 <script>
 import Navigation from './components/Navigation.vue';
+import LoginPopup from './components/LoginPopup.vue';
 
 export default {
   name: 'app',
   components: {
-    Navigation
+    Navigation, LoginPopup
+  },
+  data(){
+    return {
+      loginPopupIsVisible: false
+    }
   },
   methods: {
     afterLeave(){
@@ -23,9 +32,19 @@ export default {
     },
     isTouchDevice(){
       return 'ontouchstart' in document.documentElement;
+    },
+    openLoginPopup(){
+      this.loginPopupIsVisible = true;
+      document.querySelector('body').classList.add('hidden');
+    },
+    closeLoginPopup(){
+      this.loginPopupIsVisible = false;
+      document.querySelector('body').classList.remove('hidden');
+      window.history.back();
     }
   },
   created(){
+    eventHub.$on('openLoginPopup', this.openLoginPopup);
     if(this.isTouchDevice()) {
       document.querySelector('body').classList.add('touch');
     }
@@ -43,7 +62,7 @@ html, body{
   height: 100%;
 }
 body{
-  font-family: 'Roboto', sans-serif;
+  font-family: sans-serif;
   line-height: 1.6;
   background: $c-dark-blue;
   color: $c-light;
@@ -52,7 +71,7 @@ body{
   }
 }
 input, textarea, button{
-  font-family: 'Roboto', sans-serif;
+  font-family: sans-serif;
 }
 figure{
   padding: 0;
@@ -92,81 +111,7 @@ img{
 .wrapper{
   position: relative;
 }
-.header{
-  position: fixed;
-  background: $c-white;
-  z-index: 15;
-  display: flex;
-  @include tablet-min{
-    width: calc(100% - 170px);
-    height: 75px;
-    margin-left: 95px;
-    border-top: 0;
-    border-bottom: 0;
-    top: 0;
-  }
-  &__search{
-    height: 50px;
-    display: flex;
-    position: relative;
-    z-index: 5;
-    width: calc(100% - 110px);
-    position: fixed;
-    top: 0;
-    right: 55px;
-    @include tablet-min{
-      position: relative;
-      height: 75px;
-      right: 0;
-    }
-    &-input{
-      display: block;
-      width: 100%;
-      padding: 15px 20px 15px 45px;
-      outline: none;
-      border: 0;
-      background-color: transparent;
-      color: $c-dark;
-      font-weight: 300;
-      font-size: 16px;
-      @include tablet-min{
-        padding: 15px 30px 15px 60px;
-      }
-      @include tablet-landscape-min{
-        padding: 15px 30px 15px 80px;
-      }
-      @include desktop-min{
-        padding: 15px 30px 15px 90px;
-      }
-    }
-    &-icon{
-      width: 14px;
-      height: 14px;
-      fill: rgba($c-dark, 0.5);
-      transition: fill 0.5s ease;
-      pointer-events: none;
-      position: absolute;
-      top: 50%;
-      margin-top: -7px;
-      left: 20px;
-      @include tablet-min{
-        width: 18px;
-        height: 18px;
-        margin-top: -9px;
-        left: 30px;
-      }
-      @include tablet-landscape-min{
-        left: 50px;
-      }
-      @include desktop-min{
-        left: 60px;
-      }
-    }
-    &-input:focus + &-icon{
-      fill: $c-dark;
-    }
-  }
-}
+
 .main{
   position: relative;
   padding: 50px 0 0;
