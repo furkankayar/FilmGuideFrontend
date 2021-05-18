@@ -43,7 +43,7 @@
                 </a>
             </li>
             <li class="nav__item">
-                <a  class="nav__link" :to="{name: 'profile'}" >
+                <a  class="nav__link" :href="'/'" @click.prevent="openRegisterPopup()" >
                     <div class="nav__link-wrap">
                         <svg class="nav__link-icon">
                             <use :xlink:href="'#iconLogin'"></use>
@@ -110,8 +110,10 @@ export default {
       document.querySelector(".nav__right-list").classList.toggle("nav__right-list--active");
     },
     openLoginPopup(){
-        console.log('open');
         eventHub.$emit('openLoginPopup');
+    },
+    openRegisterPopup(){
+      eventHub.$emit('openRegisterPopup');
     }
   },
 };

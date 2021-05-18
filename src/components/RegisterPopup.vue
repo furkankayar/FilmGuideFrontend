@@ -1,11 +1,14 @@
 <template>
-    <div class="login-popup">
-        <div class="login-popup__box" @click.stop>
-            <button class="login-popup__close" @click="$emit('close')"></button>
+    <div class="register-popup">
+        <div class="register-popup__box" @click.stop>
+            <button class="register-popup__close" @click="$emit('close')"></button>
             <div class="form">
-	<h1>Login</h1>
+	<h1>Register</h1>
     <form method="post">
     	<input type="text" name="username" placeholder="Username" required="required" />
+        <input type="email" name="email" placeholder="Email" required="required" />
+        <input type="text" name="firstName" placeholder="First Name" required="required" />
+        <input type="text" name="lastName" placeholder="Last Name" required="required" />
         <input type="password" name="password" placeholder="Password" required="required" />
         <button type="submit" class="btn btn-primary btn-block btn-large">Submit</button>
     </form>
@@ -32,7 +35,7 @@ export default {
 @import "./src/scss/variables";
 @import "./src/scss/media-queries";
 
-.login-popup{
+.register-popup{
   position: fixed;
   top: 0;
   left: 0;

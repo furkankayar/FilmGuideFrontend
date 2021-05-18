@@ -3,6 +3,7 @@
     <navigation></navigation>
 
     <login-popup v-if="loginPopupIsVisible" @close="closeLoginPopup"></login-popup>
+    <register-popup v-if="registerPopupIsVisible" @close="closeRegisterPopup"></register-popup>
 
     <section class="main">
       <transition name="fade" @after-leave="afterLeave">
@@ -15,15 +16,19 @@
 <script>
 import Navigation from './components/Navigation.vue';
 import LoginPopup from './components/LoginPopup.vue';
+import RegisterPopup from './components/RegisterPopup.vue';
 
 export default {
   name: 'app',
   components: {
-    Navigation, LoginPopup
+    Navigation, 
+    LoginPopup,
+    RegisterPopup
   },
   data(){
     return {
-      loginPopupIsVisible: false
+      loginPopupIsVisible: false,
+      registerPopupIsVisible: false,
     }
   },
   methods: {
@@ -41,10 +46,20 @@ export default {
       this.loginPopupIsVisible = false;
       document.querySelector('body').classList.remove('hidden');
       window.history.back();
+    },
+    openRegisterPopup(){
+      this.registerPopupIsVisible = true;
+      document.querySelector('body').classList.add('hidden');
+    },
+    closeRegisterPopup(){
+      this.registerPopupIsVisible = false;
+      document.querySelector('body').classList.remove('hidden');
+      window.history.back();
     }
   },
   created(){
     eventHub.$on('openLoginPopup', this.openLoginPopup);
+    eventHub.$on('openRegisterPopup', this.openRegisterPopup);
     if(this.isTouchDevice()) {
       document.querySelector('body').classList.add('touch');
     }
@@ -145,6 +160,48 @@ img{
     color: $c-white;
   }
 }
+
+
+.form .btn { display: inline-block; *display: inline; *zoom: 1; padding: 4px 10px 4px; margin-bottom: 0; font-size: 13px; font-weight: 600; line-height: 18px; color: $c-dark; text-align: center;vertical-align: middle; cursor: pointer; *margin-left: .3em; border: none; transition: 0.3s; }
+.form .btn:hover, .btn:active, .btn.active, .btn.disabled, .btn[disabled] { background-color: $c-yellow; }
+.form .btn-large { padding: 9px 14px; font-size: 15px; line-height: normal; -webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; }
+.form .btn-primary { background-color: $c-yellow; transition: 0.3s; }
+.form .btn-primary:hover, .btn-primary.disabled, .btn-primary[disabled] { background-color: $c-dark-yellow; }
+.form .btn-primary:active, .btn-primary.active { background-color: $c-dark-blue; color: $c-light; }
+.form .btn-block { width: 100%; display:block; }
+
+.form { 
+    z-index: 1;
+    max-width: 500px;
+    padding: 30px;
+    background: rgba($c-dark-blue, 0.85);
+    border-radius: 20px;
+    @include mobile_only{
+        margin: 20px;
+    }
+}
+
+.form h1 { color: $c-light; letter-spacing:1px; text-align:center; }
+
+.form input { 
+	width: 100%; 
+	margin-bottom: 20px; 
+	background: rgba($c-dark-blue,0.7);
+	border: none;
+	outline: none;
+	padding: 10px;
+	font-size: 13px;
+	color: $c-light;
+	border-radius: 4px;
+	box-shadow: inset 0 0 0 rgba(100,100,100,0), 0 1px 0px rgba(255,255,255,0.2);
+	-webkit-transition: box-shadow .3s ease-in;
+	-moz-transition: box-shadow .3s ease-in;
+	-o-transition: box-shadow .3s ease-in;
+	-ms-transition: box-shadow .3s ease-in;
+	transition: box-shadow .3s ease-in;
+}
+.form input:focus { box-shadow: inset 0 0 0 rgba(100,100,100,0.7), 0 1px 0px $c-yellow; }
+
 
 
 // router view transition
