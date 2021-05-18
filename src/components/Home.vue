@@ -6,18 +6,21 @@
         <strong class="home__header-subtitle">Made with Vue.js</strong>
       </div>
     </header>
+    <movies-list v-for="item in listTypes" v-if="item.isCategory" :type="'component'" :mode="'collection'" :category="item.query" :shortList="true"></movies-list>
   </section>
 </template>
 
 <script>
+import MoviesList from './MoviesList.vue';
+import storage from '../storage.js'
 
 export default {
   components: {
-        
+    MoviesList
   },
   data: function(){
     return {
-
+      listTypes: storage.listTypes
     }
   }
 };
@@ -102,14 +105,6 @@ export default {
   }
   .wrapper{
     min-height: 0;
-  }
-  .movies__list{
-    .movies__item:last-child{
-      display: none;
-      @include desktop-min{
-        display: block;
-      }
-    }
   }
 }
 </style>

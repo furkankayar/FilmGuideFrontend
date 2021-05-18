@@ -58,8 +58,7 @@ export default {
                 lastName: this.registerForm.lastName.trim(),
                 password: this.registerForm.password.trim()
             };
-
-
+            
             this.showError = false;
             this.showSuccess = false;
 

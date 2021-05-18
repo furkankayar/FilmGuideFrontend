@@ -70,5 +70,8 @@ export default{
     },
     async whoami(){
         return this.execute('get', '/auth/whoami', {});
+    },
+    async getTrendingMovies(page){
+        return this.execute('get', '/movie/trending' + (page ? '?page=' + page : ''), {});
     }
 }

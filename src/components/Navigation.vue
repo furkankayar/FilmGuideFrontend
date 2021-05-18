@@ -163,12 +163,12 @@ export default {
   height: 50px;
   background: $c-dark-blue;
   display: flex;
-  margin-left: 10px;
+  padding-left: 10px;
   z-index: 10;
   @include tablet-min {
     width: 100%;
     height: 75px;
-    margin-left: 20px;
+    padding-left: 20px;
   }
   &__left {
       float: left;
