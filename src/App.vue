@@ -172,7 +172,7 @@ img{
 
 .form { 
     z-index: 1;
-    max-width: 500px;
+    max-width: 400px;
     padding: 30px;
     background: rgba($c-dark-blue, 0.85);
     border-radius: 20px;
@@ -193,7 +193,7 @@ img{
 	font-size: 13px;
 	color: $c-light;
 	border-radius: 4px;
-	box-shadow: inset 0 0 0 rgba(100,100,100,0), 0 1px 0px rgba(255,255,255,0.2);
+	box-shadow: inset 0 0 0 rgba(100,100,100,0), 0 1px 0px rgba(255,255,255,0.4);
 	-webkit-transition: box-shadow .3s ease-in;
 	-moz-transition: box-shadow .3s ease-in;
 	-o-transition: box-shadow .3s ease-in;

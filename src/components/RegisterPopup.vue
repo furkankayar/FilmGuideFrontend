@@ -5,12 +5,12 @@
             <div class="form">
 	<h1>Register</h1>
     <form method="post">
-    	<input type="text" name="username" placeholder="Username" required="required" />
-        <input type="email" name="email" placeholder="Email" required="required" />
-        <input type="text" name="firstName" placeholder="First Name" required="required" />
-        <input type="text" name="lastName" placeholder="Last Name" required="required" />
-        <input type="password" name="password" placeholder="Password" required="required" />
-        <button type="submit" class="btn btn-primary btn-block btn-large">Submit</button>
+    	<input type="text" v-model="username" name="username" placeholder="Username" required="required" />
+        <input type="email" v-model="email" name="email" placeholder="Email" required="required" />
+        <input type="text" v-model="firstName" name="firstName" placeholder="First Name" required="required" />
+        <input type="text" v-model="lastName" name="lastName" placeholder="Last Name" required="required" />
+        <input type="password" v-model="password" name="password" placeholder="Password" required="required" />
+        <button type="submit" class="btn btn-primary btn-block btn-large" @click="registerButtonClicked" >Submit</button>
     </form>
 </div>
         </div>
@@ -21,12 +21,33 @@
 <script>
 
 export default {
+    data(){
+        return {
+            username: "",
+            email: "", 
+            firstName: "",
+            lastName: "",
+            password: ""
+        }
+    },
     created(){
         window.addEventListener('keyup', function(e){
             if (e.keyCode == 27) {
                 this.$emit('close');
             }
         }.bind(this));
+    },
+    methods: {
+        registerButtonClicked(e){
+            e.preventDefault();
+            console.log({
+                username: this.username, 
+                email: this.email,
+                firstName: this.firstName,
+                lastName: this.lastName,
+                password: this.password
+            }) ;
+        }
     }
 }
 </script>
@@ -62,10 +83,10 @@ export default {
     padding-bottom: 50px;
     @include tablet-min{
       padding-bottom: 0;
-      margin: 40px auto;
+      margin: 50px auto;
     }
     @include mobile_only{
-        top: calc((100vh - 500px) / 2);
+        top: 50px;
         border-radius: 0;
     }
     &:before{
