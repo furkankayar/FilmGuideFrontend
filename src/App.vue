@@ -60,6 +60,7 @@ export default {
   created(){
     eventHub.$on('openLoginPopup', this.openLoginPopup);
     eventHub.$on('openRegisterPopup', this.openRegisterPopup);
+    eventHub.$on('closeLoginPopup', this.closeLoginPopup);
     if(this.isTouchDevice()) {
       document.querySelector('body').classList.add('touch');
     }
@@ -177,7 +178,7 @@ img{
     background: rgba($c-dark-blue, 0.85);
     border-radius: 20px;
     @include mobile_only{
-        margin: 20px;
+      margin: 40px 20px 40px 20px;
     }
 }
 
@@ -202,7 +203,26 @@ img{
 }
 .form input:focus { box-shadow: inset 0 0 0 rgba(100,100,100,0.7), 0 1px 0px $c-yellow; }
 
-
+.alert{
+  display: block;
+  padding: 15px;
+  margin-bottom: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  white-space: pre-line;
+  &__error{
+    color: #a94442;
+    background-color: #f2dede;
+    border-color: #ebccd1;
+  }
+  &__success{
+    color: #3c763d;
+    background-color: #dff0d8;
+    border-color: #d6e9c6;
+  }
+}
 
 // router view transition
 .fade-enter-active, .fade-leave-active {

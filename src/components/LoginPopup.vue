@@ -2,11 +2,12 @@
     <div class="login-popup">
         <div class="login-popup__box" @click.stop>
             <button class="login-popup__close" @click="$emit('close')"></button>
-            <div class="form">
+  <div class="form">
 	<h1>Login</h1>
+    <label v-if="showError" class="alert alert__error" >{{errorLabelText}}</label>
     <form method="post">
-    	<input v-model="username" type="text" name="username" placeholder="Username" required="required" />
-        <input v-model="password" type="password" name="password" placeholder="Password" required="required" />
+    	<input v-model="loginForm.username" type="text" name="username" placeholder="Username" required="required" />
+        <input v-model="loginForm.password" type="password" name="password" placeholder="Password" required="required" />
         <button  type="submit" @click="loginButtonPressed" class="btn btn-primary btn-block btn-large">Submit</button>
     </form>
 </div>
@@ -16,12 +17,17 @@
 </template>
 
 <script>
+import api from '../api.js';
 
 export default {
     data() {
       return {
-        username: "",
-        password: ""
+        loginForm: {
+          username: "",
+          password: ""
+        },
+        showError: false,
+        errorLabelText: ""
       }
     },
     created(){
@@ -32,12 +38,43 @@ export default {
         }.bind(this));
     }, 
     methods: {
-      loginButtonPressed(e) {
+      async loginButtonPressed(e) {
         e.preventDefault();
-        console.log({
-          username: this.username,
-          password: this.password
-        });
+
+        this.loginForm.username = this.loginForm.username.trim();
+        this.loginForm.password = this.loginForm.password.trim();
+
+        if(this.loginForm.username === ""){
+          this.showError = true;
+          this.errorLabelText = "Missing username!";
+          return;
+        } else if (this.loginForm.password === ""){
+          this.showError = true;
+          this.errorLabelText = "Missing password!";
+          return;
+        } else {
+          this.showError = false; 
+        }
+
+        try{
+          let response = await api.login(this.loginForm);
+          if(response.status === 200){
+            eventHub.$emit('setUserStatus');
+            eventHub.$emit('closeLoginPopup');
+          } else {
+            this.showError = true;
+            this.errorLabelText = "An error occurred!";
+          }
+        }
+        catch(error){
+          if(error.response){
+            this.showError = true;
+            this.errorLabelText = error.response.data.messages[0];
+          } else {
+            this.showError = true;
+            this.errorLabelText = "An error occurred!";
+          }
+        }
       }
     }
 }

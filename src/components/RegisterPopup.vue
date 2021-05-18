@@ -4,12 +4,15 @@
             <button class="register-popup__close" @click="$emit('close')"></button>
             <div class="form">
 	<h1>Register</h1>
+    <label v-if="showError" class="alert alert__error" >{{errorLabelText}}</label>
+    <label v-if="showSuccess" class="alert alert__success" >{{successLabelText}}</label>
+
     <form method="post">
-    	<input type="text" v-model="username" name="username" placeholder="Username" required="required" />
-        <input type="email" v-model="email" name="email" placeholder="Email" required="required" />
-        <input type="text" v-model="firstName" name="firstName" placeholder="First Name" required="required" />
-        <input type="text" v-model="lastName" name="lastName" placeholder="Last Name" required="required" />
-        <input type="password" v-model="password" name="password" placeholder="Password" required="required" />
+    	<input type="text" v-model="registerForm.username" name="username" placeholder="Username" required="required" />
+        <input type="email" v-model="registerForm.email" name="email" placeholder="Email" required="required" />
+        <input type="text" v-model="registerForm.firstName" name="firstName" placeholder="First Name" required="required" />
+        <input type="text" v-model="registerForm.lastName" name="lastName" placeholder="Last Name" required="required" />
+        <input type="password" v-model="registerForm.password" name="password" placeholder="Password" required="required" />
         <button type="submit" class="btn btn-primary btn-block btn-large" @click="registerButtonClicked" >Submit</button>
     </form>
 </div>
@@ -19,15 +22,22 @@
 </template>
 
 <script>
+import api from '../api.js';
 
 export default {
     data(){
         return {
-            username: "",
-            email: "", 
-            firstName: "",
-            lastName: "",
-            password: ""
+            registerForm: {
+                username: "",
+                email: "", 
+                firstName: "",
+                lastName: "",
+                password: ""
+            },
+            showError: false,
+            errorLabelText: "",
+            showSuccess: false,
+            successLabelText: ""
         }
     },
     created(){
@@ -38,15 +48,51 @@ export default {
         }.bind(this));
     },
     methods: {
-        registerButtonClicked(e){
+        async registerButtonClicked(e){
             e.preventDefault();
-            console.log({
-                username: this.username, 
-                email: this.email,
-                firstName: this.firstName,
-                lastName: this.lastName,
-                password: this.password
-            }) ;
+
+            this.registerForm = {
+                username: this.registerForm.username.trim(),
+                email: this.registerForm.email.trim(),
+                firstName: this.registerForm.firstName.trim(),
+                lastName: this.registerForm.lastName.trim(),
+                password: this.registerForm.password.trim()
+            };
+
+
+            this.showError = false;
+            this.showSuccess = false;
+
+            try{
+                let response = await api.register(this.registerForm);
+                if(response.status === 200){
+                    this.successLabelText = response.data.message;
+                    this.showSuccess = true;
+                    this.registerForm = {
+                        username: "",
+                        email: "",
+                        firstName: "",
+                        lastName: "",
+                        password: ""
+                    }
+                } else {
+                    this.errorLabelText = "An error occurred!";
+                    this.showError = true;
+                }
+            }
+            catch(error){
+                if(error.response){
+                    let errors = "";
+                    error.response.data.messages.forEach(function (val, index) {
+                        errors += val + "\n";
+                    });
+                    this.errorLabelText = errors;
+                    this.showError = true;
+                } else {
+                    this.errorLabelText = "An error occurred!";
+                    this.showError = true;
+                }
+            }
         }
     }
 }
@@ -69,13 +115,13 @@ export default {
   &__box{
     width: 100%;
     max-width: 768px;
-    min-height: calc(100% - 100px);
+    height: calc(100% - 100px);
     position: relative;
     display: flex;
     background-image: url('~assets/poster-wall.jpg');
     flex-direction: row;
     flex-wrap: wrap;
-      border-radius: 20px;
+    border-radius: 20px;
 
     justify-content: center;
     align-items: center;

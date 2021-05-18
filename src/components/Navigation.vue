@@ -30,7 +30,7 @@
           <use xlink:href="#iconSearch"></use>
         </svg>
     </div>
-    <div class="nav__right" v-if="!userLoggedIn">
+    <div class="nav__right" v-if="userNotAuthenticated">
         <ul class="nav__right-list">
             <li class="nav__item">
                 <a class="nav__link" :href="'/'" @click.prevent="openLoginPopup()" >
@@ -54,7 +54,7 @@
             </li>
         </ul>
     </div> 
-    <div class="nav__right" v-if="userLoggedIn">
+    <div class="nav__right" v-if="userAuthenticated">
         <ul class="nav__right-list">
             <li class="nav__item">
                 <router-link class="nav__link" :to="{name: 'profile'}" >
@@ -91,15 +91,37 @@
 
 <script>
 import storage from "../storage.js";
+import api from '../api.js';
 
 export default {
   data() {
     return {
       listTypes: storage.listTypes,
-      userLoggedIn: false
+      userAuthenticated: false,
+      userNotAuthenticated: false,
+      searchQuery: ""
     };
   },
   methods: {
+    async setUserStatus(){
+      try{
+        let response = await api.whoami();
+        if(response.status === 200){
+          this.userAuthenticated = true;
+          this.userNotAuthenticated = false;
+        } else {
+          this.userNotAuthenticated = true;
+          this.userAuthenticated = false;
+        }
+      }
+      catch(error){
+        this.userNotAuthenticated = true;
+        this.userAuthenticated = false;
+      }
+    },
+    search(){
+
+    },
     toggleNav() {
       document
         .querySelector(".nav__hamburger")
@@ -116,6 +138,14 @@ export default {
       eventHub.$emit('openRegisterPopup');
     }
   },
+  mounted(){
+    eventHub.$on('setUserStatus', this.setUserStatus)
+
+  },
+  created() {
+    this.setUserStatus();
+    eventHub.$on('setUserStatus', this.setUserStatus)
+  }
 };
 </script>
 

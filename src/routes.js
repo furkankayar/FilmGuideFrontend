@@ -1,5 +1,6 @@
 import VueRouter from 'vue-router';
 
+
 let routes = [
     {
         name: 'home',
