@@ -79,5 +79,8 @@ export default{
     },
     async removeWatchlist(movieId){
         return this.execute('post', '/movie/' + movieId + '/removeWatchlist', {});
+    },
+    async getMovie(movieId){
+        return this.execute('get', '/movie/' + movieId, {});
     }
 }

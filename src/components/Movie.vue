@@ -17,7 +17,7 @@
       </header>
       <div class="movie__main">
         <div class="movie__wrap movie__wrap--main" :class="{'movie__wrap--page': type=='page'}">
-          <div class="movie__actions" v-if="userLoggedIn && favoriteChecked">
+          <!--<div class="movie__actions" v-if="movie.watchlisted">
             <a href="#" class="movie__actions-link" :class="{'active' : favorite === true}" @click.prevent="toggleFavorite">
               <svg class="movie__actions-icon" :class="{'waiting' : favorite === ''}">
                 <use xlink:href="#iconFavorite"></use>
@@ -26,12 +26,17 @@
               <span class="movie__actions-text" v-else-if="favorite">Marked as Favorite</span>
               <span class="movie__actions-text" v-else>Mark as Favorite?</span>
             </a>
-          </div>
+          </div>-->
           <div class="movie__info">
-            <div v-if="movie.overview" class="movie__description">
-              {{ movie.overview }}
-            </div>
             <div class="movie__details">
+              <div class="movie__details-block">
+                  <h2 class="movie__details-title">
+                  Overview
+                </h2>
+                <div v-if="movie.overview" class="movie__details-text">
+                    {{ movie.overview }}
+                </div>
+              </div>
               <div v-if="movie.genres.length" class="movie__details-block">
                 <h2 class="movie__details-title">
                   Genres
@@ -46,6 +51,25 @@
                 </h2>
                 <div class="movie__details-text" v-formatDate="movie.release_date"></div>
               </div>
+              <div class="movie__details-block">
+                <div style="display:flex;">
+                    <h2 class="movie__details-title">
+                        Cast
+                    </h2>
+                    <router-link class="person__link" :to="{name: 'home-category', params: {category: category}}">
+                        View All
+                    </router-link>
+                </div>
+                <ul class="person__list">
+                    <li class="person__list-item" v-for="person in movie.cast" :key="person.id">
+                        <figure class="person__list-item__poster">
+                            <img v-if="person.profilePath" class="person__img" src="~assets/placeholder.png" v-img="personPoster(person)" alt="">
+                            <img v-if="!person.profilePath" class="person__img is-loaded" src="~assets/no-image.png" alt="">
+                        </figure>
+                        <p class="person__list-item__title">{{ person.name }}</p>
+                    </li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
@@ -56,6 +80,7 @@
 
 <script>
 import axios from 'axios'
+import api from '../api.js'
 import storage from '../storage.js'
 import img from '../directives/v-image.js'
 import formatDate from '../directives/v-formatDate.js'
@@ -72,41 +97,38 @@ export default {
       movieLoaded: false,
       moviePosterSrc: '',
       movieBackdropSrc: '',
-      userLoggedIn: storage.sessionId ? true : false,
       favoriteChecked: false,
-      favorite: ''
+      favorite: '',
+      noImage: false
     }
   },
-  // computed: {
-  //   loaded(){
-  //     return this.movieLoaded ? true : false;
-  //   }
-  // },
   methods: {
     fetchMovie(id){
-      axios.get(`https://api.themoviedb.org/3/movie/${id}?api_key=${storage.apiKey}&language=en-US`)
-      .then(function(resp){
-          let movie = resp.data;
-          this.movie = movie;
-          this.poster();
-          this.backdrop();
-          if(this.userLoggedIn){
-            this.checkIfInFavorites(movie.id);
-          } else {
-            this.movieLoaded = true;
-          }
-          // Push state
-          if(storage.createMoviePopup){
-            storage.moviePath = '/movie/' + id;
-            history.pushState({ popup: true }, null, storage.moviePath);
-            storage.createMoviePopup = false;
-          }
-          // Change Page title
-          document.title = this.movie.title + storage.pageTitlePostfix;
-      }.bind(this))
-      .catch(function(error) {
-        this.$router.push({ name: '404' });
-      }.bind(this));
+        api.getMovie(id)
+        .then(response => {
+            if(response.status === 200){
+                let movie = response.data;
+                this.movie = movie;
+                this.poster();
+                this.backdrop();
+                this.movieLoaded = true;
+                this.movie.cast = this.movie.cast.sort(() => .5 - Math.random()).slice(0, 8);
+                document.title = this.movie.title;
+            } else {
+                this.$router.push({name: '404'});
+            }
+            
+        })
+        .catch(error => {
+            this.$router.push({ name: '404' });
+        });
+    },
+    personPoster(person) {
+      if(person.profilePath){
+        return 'https://image.tmdb.org/t/p/w370_and_h556_bestv2' + person.profilePath;
+      } else {
+        this.noImage = true;
+      }
     },
     poster() {
       if(this.movie.poster_path){
@@ -123,27 +145,6 @@ export default {
       data.forEach((item) => nestedArray.push(item.name));
       resultString = nestedArray.join(', ');
       return resultString;
-    },
-    checkIfInFavorites(id){
-      axios.get(`https://api.themoviedb.org/3/movie/${id}/account_states?api_key=${storage.apiKey}&session_id=${storage.sessionId}`)
-      .then(function(resp){
-          this.favorite = resp.data.favorite;
-          this.favoriteChecked = true;
-          this.movieLoaded = true;
-      }.bind(this))
-    },
-    toggleFavorite(){
-      let favoriteInvert = !this.favorite;
-      this.favorite = '';
-      axios.post(`https://api.themoviedb.org/3/account/${storage.userId}/favorite?api_key=${storage.apiKey}&session_id=${storage.sessionId}`, {
-        'media_type': 'movie',
-        'media_id': this.id,
-        'favorite': favoriteInvert
-      })
-      .then(function(resp){
-        this.favorite = favoriteInvert;
-        eventHub.$emit('updateFavorite');
-      }.bind(this));
     }
   },
   watch: {
@@ -153,7 +154,6 @@ export default {
   },
   created(){
     this.fetchMovie(this.id);
-    console.log('asdadsa');
   }
 }
 </script>
@@ -325,7 +325,7 @@ export default {
       @include tablet-min{
         order: 2;
         padding: 40px;
-        width: 55%;
+        width: 60%;
         margin-left: calc(max(325px, 25%));
       }
     }
@@ -363,7 +363,130 @@ export default {
           font-weight: 300;
           font-size: 14px;
           margin-top: 5px;
-        }
+        }    
+    }
+}
+
+.person{
+    &__link{
+      font-size: 12px;
+      font-weight: 300;
+      letter-spacing: 0.5px;
+      color: rgba($c-light, 0.5);
+      margin: auto;
+      margin-right: 0;
+      text-decoration: none;
+      transition: color 0.5s ease;
+      &:after{
+        content: " →";
       }
+      &:hover{
+        color: $c-light;
+      }
+    }
+     &__img{
+        width: 100%;
+        opacity: 0;
+        border-radius: 10px 10px 0 0;
+        transform: scale(0.97) translateZ(0);
+        transition: opacity 0.5s ease, transform 0.5s ease;
+        &.is-loaded{
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+    &__list{
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        display: flex;
+        flex-wrap: wrap;
+        &-item{
+            transition: 0.2s;
+            border-radius: 10px;
+            cursor: pointer;
+            background-color: $c-movie-item-gray;
+            margin: 10px;
+
+            @include mobile_only{
+                width: calc((100% + 20px) / 4 - 20px);
+                &:first-child{
+                    margin: 10px 10px 10px 0px;
+                }
+                &:nth-child(4){
+                    margin: 10px 0px 10px 10px;
+                }
+                &:nth-child(5){
+                    margin: 10px 10px 10px 0px;
+                }
+                &:last-child{
+                    margin: 10px 0px 10px 10px;
+                }
+            }
+            width: 50%;
+            @include tablet-min{
+                width: calc((100% + 20px) / 4 - 20px);
+                &:first-child{
+                    margin: 10px 10px 10px 0px;
+                }
+                &:nth-child(4){
+                    margin: 10px 0px 10px 10px;
+                }
+                &:nth-child(5){
+                    margin: 10px 10px 10px 0px;
+                }
+                &:last-child{
+                    margin: 10px 0px 10px 10px;
+                }
+            }
+            @include tablet-landscape-min{
+                width: calc((100% + 20px) / 4 - 20px);
+                &:first-child{
+                    margin: 10px 10px 10px 0px;
+                }
+                &:nth-child(4){
+                    margin: 10px 0px 10px 10px;
+                }
+                &:nth-child(5){
+                    margin: 10px 10px 10px 0px;
+                }
+                &:last-child{
+                    margin: 10px 0px 10px 10px;
+                }
+            }
+            @include desktop-min{
+                width: calc((100% + 20px)/8 - 20px);
+                &:first-child{
+                    margin: 10px 10px 10px 0px;
+                }
+                &:nth-child(4){
+                    margin: 10px 10px 10px 10px;
+                }
+                &:nth-child(5){
+                    margin: 10px 10px 10px 10px;
+                }
+                &:last-child{
+                    margin: 10px 0px 10px 10px;
+                }
+            }
+            &__title{
+                margin: 0;
+                padding: 10px 10px 10px 10px;
+                font-size: 11px;
+                font-weight: 500;
+                letter-spacing: 0.5px;
+                transition: color 0.5s ease;
+                @include mobile-ls-min{
+                    font-size: 12px;
+                }
+                @include tablet-min{
+                    font-size: 14px;
+                }
+            }
+        }
+        &-item:hover{
+            transform: scale(1.05);
+        }
+    }
 }
 </style>
