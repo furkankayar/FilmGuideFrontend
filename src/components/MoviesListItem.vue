@@ -10,8 +10,8 @@
         <p class="movies-item__title">{{ movie.title }}</p>
         <p class="movies-item__date">{{ movie.release_date.substring(0, 4) }}</p>
         <p class="movies-item__lang">{{ movie.original_language.toUpperCase() }}</p>
-        <button v-if="!movie.watchlisted" class="movies-item__watchlist-button"><span style="margin-right: 5px; font-size:110%;">&plus;</span>Watchlist</button>
-        <button v-if="movie.watchlisted" class="movies-item__watchlist-button-activated"><span style="margin-right: 5px; font-size:110%;">&check;</span>Watchlisted</button>
+        <button v-if="!movie.watchlisted" class="movies-item__watchlist-button" @click="addWatchlist"><span style="margin-right: 5px; font-size:110%;">&plus;</span>Watchlist</button>
+        <button v-if="movie.watchlisted" class="movies-item__watchlist-button-activated" @click="removeWatchlist"><span style="margin-right: 5px; font-size:110%;">&check;</span>Watchlisted</button>
       </div>
     </a>
   </li>
@@ -19,6 +19,7 @@
 
 <script>
 import img from '../directives/v-image.js';
+import api from '../api.js';
 
 export default {
   props: ['movie'],
@@ -40,6 +41,28 @@ export default {
     },
     openMoviePopup(id, event){
       eventHub.$emit('openMoviePopup', id, event);
+    },
+    async addWatchlist(){
+        try{
+            let response = await api.addWatchlist(this.movie.id);
+            if (response.status === 200){
+                this.movie.watchlisted = true;
+            }
+        }
+        catch(error){
+            console.log(error.response);
+        }
+    },
+    async removeWatchlist(){
+        try{
+            let response = await api.removeWatchlist(this.movie.id);
+            if (response.status === 200){
+                this.movie.watchlisted = false;
+            }
+        }
+        catch(error){
+            console.log(error.response);
+        }
     }
   }
 }

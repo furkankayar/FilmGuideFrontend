@@ -73,5 +73,11 @@ export default{
     },
     async getTrendingMovies(page){
         return this.execute('get', '/movie/trending' + (page ? '?page=' + page : ''), {});
+    },
+    async addWatchlist(movieId){
+        return this.execute('post', '/movie/' + movieId + '/addWatchlist', {});
+    },
+    async removeWatchlist(movieId){
+        return this.execute('post', '/movie/' + movieId + '/removeWatchlist', {});
     }
 }
