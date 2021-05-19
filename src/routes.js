@@ -8,6 +8,20 @@ let routes = [
         components: {
             'list-router-view': require('./components/Home.vue')
         }
+    },
+    {
+        name: 'home-category',
+        path: '/movies/:category',
+        components: {
+            'list-router-view': require('./components/MoviesList.vue')
+        }
+    },
+    {
+        name: 'movie',
+        path: '/movie/:id',
+        components: {
+            'page-router-view': require('./components/MoviePage.vue')
+        }
     }
 ]
 

@@ -8,6 +8,7 @@
     <section class="main">
       <transition name="fade" @after-leave="afterLeave">
         <router-view name="list-router-view" :type="'page'" :mode="'collection'" :key="$route.params.category"></router-view>
+        <router-view name="page-router-view"></router-view>
       </transition>
     </section>
   </div>
@@ -141,15 +142,14 @@ img{
   display: inline-block;
   border: 1px solid $c-dark;
   text-transform: uppercase;
-  background: $c-dark;
+  background: $c-yellow;
   font-weight: 300;
   font-size: 11px;
   line-height: 2;
   letter-spacing: 0.5px;
   padding: 5px 20px 4px 20px;
   cursor: pointer;
-  color: $c-dark;
-  background: transparent;
+  color: $c-dark-blue;
   outline: none;
   transition: background 0.5s ease, color 0.5s ease;
   @include tablet-min{

@@ -2,6 +2,7 @@
   <div class="wrapper" v-if="listLoaded">
     <div class="movies" v-if="movies.length">
       <header class="movies__header">
+        <div class="header_icon"></div>
         <h2 class="movies__title">{{ listTitle }}</h2>
         <span class="movies__results" v-if="!shortList">{{ countResults }}</span>
         <router-link v-if="shortList" class="movies__link" :to="{name: 'home-category', params: {category: category}}">
@@ -101,12 +102,15 @@ export default {
     },
     loadMore(){
       this.currentPage++;
-      axios.get(this.request)
-      .then(function(resp){
-          let data = resp.data;
-          let newData = this.movies.concat(data.results);
-          this.movies = newData;
-      }.bind(this));
+      api.getTrendingMovies(this.currentPage)
+      .then(response => {
+        let data = response.data;
+        let newData = this.movies.concat(data.results);
+        this.movies = newData;
+      })
+      .catch(error => {
+
+      });
     },
     updateFavorite(){
       if(this.mode == 'favorite'){
@@ -174,24 +178,15 @@ export default {
   &__header{
     display: flex;
     align-items: center;
-    justify-content: space-between;
     padding: 20px 10px;
-    @include tablet-min{
-      padding: 23px 15px;
-    }
-    @include tablet-landscape-min{
-      padding: 16px 25px;
-    }
-    @include desktop-min{
-      padding: 8px 30px;
-    }
+   
   }
     &__title{
       margin: 0;
       font-size: 16px;
       line-height: 16px;
-      color: $c-dark;
-      font-weight: 300;
+      color: $c-yellow;
+      font-weight: 500;
       @include tablet-min{
         font-size: 18px;
         line-height: 18px;
@@ -207,14 +202,16 @@ export default {
       font-size: 12px;
       font-weight: 300;
       letter-spacing: 0.5px;
-      color: rgba($c-dark, 0.5);
+      color: rgba($c-light, 0.5);
+      margin: auto;
+      margin-right: 0;
       text-decoration: none;
       transition: color 0.5s ease;
       &:after{
         content: " →";
       }
       &:hover{
-        color: $c-dark;
+        color: $c-light;
       }
     }
   &__list{
@@ -244,5 +241,14 @@ export default {
         display: none;
       }
     }
+}
+
+.header_icon{
+  display: block;
+  width: 7px;
+  height: 30px;
+  border-radius: 20px;
+  margin-right: 10px;
+  background-color: $c-yellow;
 }
 </style>

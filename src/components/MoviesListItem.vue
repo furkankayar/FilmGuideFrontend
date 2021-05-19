@@ -1,6 +1,7 @@
 <template>
   <li class="movies-item">
-    <a class="movies-item__link" :class="{'no-image': noImage}" :href="'/movie/' + movie.id" @click.prevent="openMoviePopup(movie.id, true)">
+    <router-link class="movies-item__link" :class="{'no-image': noImage}" :to="{name: 'movie', params: {id: movie.id}}">
+
       <figure class="movies-item__poster">
         <img v-if="!noImage" class="movies-item__img" src="~assets/placeholder.png" v-img="poster()" alt="">
         <img v-if="noImage" class="movies-item__img is-loaded" src="~assets/no-image.png" alt="">
@@ -13,7 +14,7 @@
         <button v-if="!movie.watchlisted" class="movies-item__watchlist-button" @click="addWatchlist"><span style="margin-right: 5px; font-size:110%;">&plus;</span>Watchlist</button>
         <button v-if="movie.watchlisted" class="movies-item__watchlist-button-activated" @click="removeWatchlist"><span style="margin-right: 5px; font-size:110%;">&check;</span>Watchlisted</button>
       </div>
-    </a>
+    </router-link>
   </li>
 </template>
 
@@ -104,6 +105,7 @@ export default {
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
+    font-weight: 600;
     letter-spacing: 0.5px;
     transition: color 0.5s ease;
     @include mobile-ls-min{
@@ -115,34 +117,24 @@ export default {
   }
   &__date{
     margin: 0;
-    padding: 0 0 10px 10px;
+    padding: 5px 0 10px 10px;
     float: left;
     width: 50%;
-    font-size: 11px;
+    font-size: 10px;
+    color: rgba($c-light, 0.7);
     letter-spacing: 0.5px;
     transition: color 0.5s ease;
-    @include mobile-ls-min{
-        font-size: 12px;
-    }
-    @include tablet-min{
-        font-size: 14px;
-    }
   }
   &__lang{
     margin: 0;
-    padding: 0 10px 10px 0;
+    padding: 5px 10px 10px 0;
     float: right;
     text-align: right;
     width: 50%;
-    font-size: 11px;
+    font-size: 10px;
+    color: rgba($c-light, 0.7);
     letter-spacing: 0.5px;
     transition: color 0.5s ease;
-    @include mobile-ls-min{
-        font-size: 12px;
-    }
-    @include tablet-min{
-        font-size: 14px;
-    }
   }
   &__star{
       margin-right: 5px;
@@ -165,13 +157,20 @@ export default {
 
   &__watchlist-button{
       cursor: pointer;
+      transition: 0.3s;
       width: 100%;
-      font-size: 14px;
+      font-size: 11px;
       border-radius: 0 0 10px 10px;
       background-color: $c-movie-item-gray;
       color: $c-yellow;
       border: 1px solid $c-yellow;
       height: 30px;
+      @include mobile-ls-min{
+        font-size: 12px;
+      }
+      @include tablet-min{
+        font-size: 13px;
+      }
   }
   &__watchlist-button:hover{
       background-color: $c-dark-blue;
@@ -179,13 +178,20 @@ export default {
   }
   &__watchlist-button-activated{
       cursor: pointer;
+      transition: 0.3s;
       width: 100%;
-      font-size: 14px;
+      font-size: 11px;
       border-radius: 0 0 10px 10px;
       background-color: $c-yellow;
       color: $c-dark-blue;
       border: 1px solid $c-yellow;
       height: 30px;
+      @include mobile-ls-min{
+        font-size: 12px;
+      }  
+      @include tablet-min{
+        font-size: 13px;
+      }
   }
 
   &__watchlist-button-activated:hover{
