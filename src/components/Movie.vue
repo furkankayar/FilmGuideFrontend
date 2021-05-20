@@ -18,17 +18,8 @@
       <div class="movie__main">
         <div class="movie__wrap movie__wrap--main" :class="{'movie__wrap--page': type=='page'}">
           <div class="movie__actions">
-            <a href="#" class="movie__actions-link" :class="{'active' : favorite === true}" @click.prevent="toggleFavorite">
-              <svg class="movie__actions-icon" :class="{'waiting' : favorite === ''}">
-                <use xlink:href="#iconFavorite"></use>
-              </svg>
               <button v-if="!movie.watchlisted" class="watchlist-button" @click="addWatchlist"><span style="margin-right: 5px; font-size:110%;">&plus;</span>Watchlist</button>
               <button v-if="movie.watchlisted" class="watchlist-button-activated" @click="removeWatchlist"><span style="margin-right: 5px; font-size:110%;">&check;</span>Watchlisted</button>
-      
-              <!--<span class="movie__actions-text" v-if="favorite === ''">Wait...</span>
-              <span class="movie__actions-text" v-else-if="favorite">Marked as Favorite</span>
-              <span class="movie__actions-text" v-else>Mark as Favorite?</span>-->
-            </a>
           </div>
           <div class="movie__info">
             <div class="movie__details">
@@ -59,7 +50,7 @@
                     <h2 class="movie__details-title">
                         Cast
                     </h2>
-                    <router-link class="person__link" :to="{name: 'home-category', params: {category: category}}">
+                    <router-link class="person__link" :to="{name: 'home-category', params: {}}">
                         View All
                     </router-link>
                 </div>
@@ -72,6 +63,29 @@
                         <p class="person__list-item__title">{{ person.name }}</p>
                     </li>
                 </ul>
+              </div>
+              <div class="movie__details-block">
+                <h2 class="movie__details-title">
+                  Trailer
+                </h2>
+                <div class="trailer">
+                  <div class="trailer__tab">
+                    <button class="trailer__tablink" @click="trailerChangeTab(0)">1</button>
+                    <button class="trailer__tablink" @click="trailerChangeTab(1)">2</button>
+                    <button class="trailer__tablink" @click="trailerChangeTab(2)">3</button>
+                  </div>
+                  <div v-if="showTrailerIndex == 0" class="trailer__tabcontent">
+                    <iframe class="trailer__video"
+                      src="https://www.youtube.com/embed/tgbNymZ7vqY">
+                    </iframe> 
+                  </div>
+                  <div v-if="showTrailerIndex == 1" class="trailer__tabcontent">
+                    TRAILER 1
+                  </div>
+                  <div v-if="showTrailerIndex == 2" class="trailer__tabcontent">
+                    TRAILER 2
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -102,7 +116,8 @@ export default {
       movieBackdropSrc: '',
       favoriteChecked: false,
       favorite: '',
-      noImage: false
+      noImage: false,
+      showTrailerIndex: 0
     }
   },
   methods: {
@@ -168,6 +183,9 @@ export default {
         }
         catch(error){
         }
+    },
+    trailerChangeTab(index){
+      this.showTrailerIndex = index;
     }
   },
   watch: {
@@ -374,7 +392,7 @@ export default {
         }
       }
       &__details{
-        &-block:not(:last-child){
+        &-block{
           margin-bottom: 20px;
           @include tablet-min{
             margin-bottom: 30px;
@@ -563,4 +581,69 @@ export default {
       }
   }
 }
+
+.trailer{
+  display: flex;
+  justify-content: space-between;
+  margin-top: 5px;
+  padding: 1px;
+  border: 1px solid $c-yellow;
+  text-align: justify;
+  border-radius: 10px;
+
+  &__tab{
+    overflow: hidden;
+    display: inline-block;
+    width: 10%;
+  }
+  &__tablink{
+    background-color: $c-dark-blue;
+    color: $c-yellow;
+    width: 100%;
+    text-align: center;
+    outline: none;
+    cursor: pointer;
+    border: none;
+    padding: 10px 10px 10px 10px;
+    transition: 0.3s;
+    border: 1px solid $c-yellow;
+    border-left: none;
+    border-top: none;
+
+    &:first-child{
+      border-radius: 10px 0px 0px 0px;
+    }
+
+    &:last-child{
+      border-radius: 0px 0px 10px 0px;
+    }
+
+    &:hover{
+      background-color: $c-dark;
+    }
+    &:active{
+      background-color: $c-yellow;
+      color: $c-dark-blue;
+    }
+  }
+  &__tabcontent{
+    position: relative;
+    display: inline-block;
+    width: 90%;
+    padding-top: 56.25%;
+  }
+  &__video{
+    border-radius: 10px;
+    width: 100%;
+    height: 100%;
+    border: none;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+  }
+}
+
 </style>

@@ -55,7 +55,6 @@ export default {
             }
         }
         catch(error){
-            console.log(error.response);
         }
     },
     async removeWatchlist(e){
@@ -66,7 +65,6 @@ export default {
             }
         }
         catch(error){
-            console.log(error.response);
         }
     }
   }
