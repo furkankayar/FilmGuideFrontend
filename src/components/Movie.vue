@@ -17,16 +17,19 @@
       </header>
       <div class="movie__main">
         <div class="movie__wrap movie__wrap--main" :class="{'movie__wrap--page': type=='page'}">
-          <!--<div class="movie__actions" v-if="movie.watchlisted">
+          <div class="movie__actions">
             <a href="#" class="movie__actions-link" :class="{'active' : favorite === true}" @click.prevent="toggleFavorite">
               <svg class="movie__actions-icon" :class="{'waiting' : favorite === ''}">
                 <use xlink:href="#iconFavorite"></use>
               </svg>
-              <span class="movie__actions-text" v-if="favorite === ''">Wait...</span>
+              <button v-if="!movie.watchlisted" class="watchlist-button" @click="addWatchlist"><span style="margin-right: 5px; font-size:110%;">&plus;</span>Watchlist</button>
+              <button v-if="movie.watchlisted" class="watchlist-button-activated" @click="removeWatchlist"><span style="margin-right: 5px; font-size:110%;">&check;</span>Watchlisted</button>
+      
+              <!--<span class="movie__actions-text" v-if="favorite === ''">Wait...</span>
               <span class="movie__actions-text" v-else-if="favorite">Marked as Favorite</span>
-              <span class="movie__actions-text" v-else>Mark as Favorite?</span>
+              <span class="movie__actions-text" v-else>Mark as Favorite?</span>-->
             </a>
-          </div>-->
+          </div>
           <div class="movie__info">
             <div class="movie__details">
               <div class="movie__details-block">
@@ -145,6 +148,26 @@ export default {
       data.forEach((item) => nestedArray.push(item.name));
       resultString = nestedArray.join(', ');
       return resultString;
+    },
+    async addWatchlist(e){
+        try{
+            let response = await api.addWatchlist(this.movie.movie_id);
+            if (response.status === 200){
+                this.movie.watchlisted = true;
+            }
+        }
+        catch(error){
+        }
+    },
+    async removeWatchlist(e){
+        try{
+            let response = await api.removeWatchlist(this.movie.movie_id);
+            if (response.status === 200){
+                this.movie.watchlisted = false;
+            }
+        }
+        catch(error){
+        }
     }
   },
   watch: {
@@ -216,7 +239,7 @@ export default {
         display: block;
         position: absolute;
         max-width: calc(25% - 40px);
-        min-width: 285px;
+        min-width: 260px;
         top: 100px;
         left: 40px;
       }
@@ -241,7 +264,7 @@ export default {
       @include tablet-min{
         width: 55%;
         text-align: left;
-        margin-left: calc(max(325px, 25%));
+        margin-left: calc(max(300px, 25%));
 
         padding: 30px 30px 30px 40px;
       }
@@ -270,22 +293,30 @@ export default {
   }
     &__actions{
       text-align: center;
-      width: 100%;
+      max-width: calc(25%);
+      width: calc(25% - 40px);
+      min-width: 260px;
       order: 2;
       padding: 20px;
+      margin-top: 150px;
+      margin-left: 40px;
       border-top: 1px solid rgba($c-dark, 0.05);
       @include tablet-min{
         order: 1;
-        width: 45%;
-        padding: 185px 0 40px 40px;
+      width: calc(25% - 40px);
+        min-width: 260px;
+        margin-top: 150px;
         border-top: 0;
+      }
+      @include desktop-min{
+        margin-top: calc(33% - 240px);
       }
       &-link{
         display: flex;
         align-items: center;
         text-decoration: none;
         text-transform: uppercase;
-        color: rgba($c-dark, 0.5);
+        color: rgba($c-light, 0.5);
         transition: color 0.5s ease;
         font-size: 11px;
         padding: 10px 0;
@@ -329,7 +360,7 @@ export default {
         margin-left: calc(max(325px, 25%));
       }
     }
-    &__actions + &__info{
+    &__info{
       margin-left: 0;
     }
       &__description{
@@ -488,5 +519,48 @@ export default {
             transform: scale(1.05);
         }
     }
+}
+
+.watchlist-button{
+      cursor: pointer;
+      transition: 0.3s;
+      width: 100%;
+      font-size: 11px;
+      border-radius: 10px 10px 10px 10px;
+      background-color: transparent;
+      color: $c-yellow;
+      border: 1px solid $c-yellow;
+      height: 30px;
+      @include mobile-ls-min{
+        font-size: 12px;
+      }
+      @include tablet-min{
+        font-size: 13px;
+    }
+    &:hover{
+      background-color: $c-movie-item-gray;
+      color: $c-yellow;
+    }
+    &-activated{
+      cursor: pointer;
+      transition: 0.3s;
+      width: 100%;
+      font-size: 11px;
+      border-radius: 10px 10px 10px 10px;
+      background-color: $c-yellow;
+      color: $c-dark-blue;
+      border: 1px solid $c-yellow;
+      height: 30px;
+      @include mobile-ls-min{
+        font-size: 12px;
+      }  
+      @include tablet-min{
+        font-size: 13px;
+      }
+      &:hover{
+        background-color: $c-movie-item-gray;
+        color: $c-yellow;
+      }
+  }
 }
 </style>
