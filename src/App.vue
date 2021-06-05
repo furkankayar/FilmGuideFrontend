@@ -235,4 +235,9 @@ img{
 .fade-enter, .fade-leave-active {
   opacity: 0
 }
+
+.separator{
+  border-color: $c-yellow;
+  border-width: 1px;
+}
 </style>

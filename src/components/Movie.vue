@@ -88,8 +88,48 @@
                   Reviews
                 </h2>
                 <ul class="review__list">
-                  <review/>
+                  <review :review="review"/>
                 </ul>
+                <div v-if="!showForm" class="review__text" @click="showForm = true">
+                  Review this movie
+                </div>
+                <div v-if="showForm" class="review__form">
+                  <h2 class="movie__details-title" align="center">New Review</h2>
+                  <hr class="separator">
+                  <label v-if="showError" class="alert alert__error" >{{errorLabelText}}</label>
+                  <form>
+                  <label class="review__label" for="title">Title</label>
+                  <input v-model="reviewTitle" name="title" class="review__input" required="required"/>
+                  <br>
+                  <label class="review__label" for="content">Content</label>
+                  <textarea v-model="reviewContent" rows="4" name="content" class="review__input review__input-content" required="required"/>
+                  <div class="review__label">Rating</div>
+                  <div class="rate">
+                    <input type="radio" id="star10" name="rate" value="10" @click="reviewRating = 10" />
+                    <label for="star10" title="text">10 stars</label>
+                    <input type="radio" id="star9" name="rate" value="9" @click="reviewRating = 9" />
+                    <label for="star9" title="text">9 stars</label>
+                    <input type="radio" id="star8" name="rate" value="8" @click="reviewRating = 8" />
+                    <label for="star8" title="text">8 stars</label>
+                    <input type="radio" id="star7" name="rate" value="7" @click="reviewRating = 7" />
+                    <label for="star7" title="text">7 stars</label>
+                    <input type="radio" id="star6" name="rate" value="6" @click="reviewRating = 6" />
+                    <label for="star6" title="text">6 stars</label>
+                    <input type="radio" id="star5" name="rate" value="5" @click="reviewRating = 5" />
+                    <label for="star5" title="text">5 stars</label>
+                    <input type="radio" id="star4" name="rate" value="4" @click="reviewRating = 4" />
+                    <label for="star4" title="text">4 stars</label>
+                    <input type="radio" id="star3" name="rate" value="3" @click="reviewRating = 3" />
+                    <label for="star3" title="text">3 stars</label>
+                    <input type="radio" id="star2" name="rate" value="2" @click="reviewRating = 2" />
+                    <label for="star2" title="text">2 stars</label>
+                    <input type="radio" id="star1" name="rate" value="1" @click="reviewRating = 1" />
+                    <label for="star1" title="text">1 star</label>
+                  </div>
+                  <button type="submit" class="review__button" @click="sendComment">Send</button>
+
+                  </form>
+                </div>
               </div>
             </div>
           </div>
@@ -125,10 +165,44 @@ export default {
       favoriteChecked: false,
       favorite: '',
       noImage: false,
-      videoKey: ""
+      videoKey: "",
+      reviewTitle: "",
+      reviewContent: "",
+      reviewRating: 0,
+      showError: false,
+      errorLabelText: "",
+      showForm: false,
+      review: {
+        id: 223,
+        rate: 7,
+        title: "Still trying to absorb what I've seen",
+        content: "Going into this movie I had one wish: To leave feeling that it was a successful conclusion to a two-part film. Taking Reloaded/Revolutions as a single (very large) movie with an intermission is the best way to evaluate it. Viewed that way I think it succeeded. I thought Revolutions was the equal of Reloaded, yet I can see how many will think it failed. The ending gave us everything we needed to know, but did not show us all we wanted to see. I'm speaking of the last twenty minutes or so here. After a visually robust middle, in which I felt my eyes grow larger in their sockets more than once, the ending seemed like an anticlimax. It needed to be longer, and I would gladly have traded some of the fx flair used earlier to give the final part of the film it's justified due. It will be awhile before",
+        user: "furkankayar",
+        date: "12.02.2021",
+        liked: false,
+        likeCount: 11
+      }
     }
   },
   methods: {
+    sendComment(e){
+      e.preventDefault();
+      if(this.reviewTitle == ""){
+        this.errorLabelText = "Title is missing!";
+        this.showError = true;
+
+      }
+      else if(this.reviewContent == ""){
+        this.errorLabelText = "Content is missing!";
+        this.showError = true;
+      }
+      else{
+        this.showError = false;
+      }
+      console.log(this.reviewTitle);
+      console.log(this.reviewContent);
+      console.log(this.reviewRating);
+    },
     fetchMovie(id){
         api.getMovie(id)
         .then(response => {
@@ -667,6 +741,114 @@ export default {
     right: 0;
 
   }
+}
+
+.review{
+  &__list{
+    padding: 0;
+  }
+  &__text{
+    font-size: 14px;
+    color: $c-yellow;
+    cursor: pointer;
+    &:hover{
+      text-decoration: underline;
+    }
+  }
+  &__input{
+    width: 100%;
+    border: none;
+    background-color: $c-dark-blue;
+    color: $c-light;
+    font-size: 14px;
+    padding: 10px;
+    border-radius: 10px;
+    line-height: 20px;
+    margin: 5px 0px;
+    &:focus{
+      outline-width: 0px;
+    }
+    &-content{
+      resize: vertical;
+    }
+  }
+  &__label{
+    font-size: 14px;
+    color: $c-yellow;
+  }
+  &__button{
+    margin-top: 20px;
+     cursor: pointer;
+      transition: 0.3s;
+      width: 100%;
+      font-size: 11px;
+      border-radius: 10px 10px 10px 10px;
+      background-color: $c-dark-blue;
+      color: $c-yellow;
+      border: 1px solid $c-yellow;
+      height: 30px;
+      @include mobile-ls-min{
+        font-size: 12px;
+      }
+      @include tablet-min{
+        font-size: 13px;
+    }
+    &:hover{
+      background-color: $c-yellow;
+      color: $c-dark-blue;
+    }
+  }
+  &__form{
+    padding: 10px;
+    width: 90%;
+    border-radius: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: $c-dark;
+    @include tablet-min{
+        width: 70%;
+    }
+    @include desktop-min{
+        width: 50%;
+    }
+  }
+}
+
+.rate {
+    float: left;
+    padding: 0;
+}
+.rate:not(:checked) > input {
+    position:absolute;
+    top:-9999px;
+    left: -9999px;
+    visibility: hidden;
+}
+.rate:not(:checked) > label {
+    float:right;
+    width:1em;
+    overflow:hidden;
+    white-space:nowrap;
+    cursor:pointer;
+    font-size:30px;
+    color:#ccc;
+}
+.rate:not(:checked) > label:before {
+    content: '★ ';
+}
+.rate > input:checked ~ label {
+    color: $c-yellow;    
+}
+.rate:not(:checked) > label:hover,
+.rate:not(:checked) > label:hover ~ label {
+    color: #deb217;  
+}
+.rate > input:checked + label:hover,
+.rate > input:checked + label:hover ~ label,
+.rate > input:checked ~ label:hover,
+.rate > input:checked ~ label:hover ~ label,
+.rate > label:hover ~ input:checked ~ label {
+    color: #c59b08;
 }
 
 </style>
