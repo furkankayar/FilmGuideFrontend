@@ -64,28 +64,32 @@
                     </li>
                 </ul>
               </div>
-              <div class="movie__details-block">
+              <div v-if="movie.videos.length > 0" class="movie__details-block">
                 <h2 class="movie__details-title">
-                  Trailer
+                  Trailers
                 </h2>
                 <div class="trailer">
                   <div class="trailer__tab">
-                    <button class="trailer__tablink" @click="trailerChangeTab(0)">1</button>
-                    <button class="trailer__tablink" @click="trailerChangeTab(1)">2</button>
-                    <button class="trailer__tablink" @click="trailerChangeTab(2)">3</button>
+                    <div class="trailer__tablink" v-for="video, index in movie.videos" :key="video.videoId" @click="trailerChangeTab(index)">
+                      <button class="trailer__tablink-button">{{ index + 1 }}</button>
+                    </div>
                   </div>
-                  <div v-if="showTrailerIndex == 0" class="trailer__tabcontent">
+                  
+                  <div class="trailer__tabcontent">
                     <iframe class="trailer__video"
-                      src="https://www.youtube.com/embed/tgbNymZ7vqY">
+                      :src="'https://www.youtube.com/embed/' + videoKey">
                     </iframe> 
                   </div>
-                  <div v-if="showTrailerIndex == 1" class="trailer__tabcontent">
-                    TRAILER 1
-                  </div>
-                  <div v-if="showTrailerIndex == 2" class="trailer__tabcontent">
-                    TRAILER 2
-                  </div>
+                
                 </div>
+              </div>
+              <div class="movie__details-block">
+                <h2 class="movie__details-title">
+                  Reviews
+                </h2>
+                <ul class="review__list">
+                  <review/>
+                </ul>
               </div>
             </div>
           </div>
@@ -101,12 +105,16 @@ import api from '../api.js'
 import storage from '../storage.js'
 import img from '../directives/v-image.js'
 import formatDate from '../directives/v-formatDate.js'
+import Review from './Review.vue'
 
 export default {
   props: ['id', 'type'],
   directives: {
     img: img,
     formatDate: formatDate
+  },
+  components: {
+    Review
   },
   data(){
     return{
@@ -117,7 +125,7 @@ export default {
       favoriteChecked: false,
       favorite: '',
       noImage: false,
-      showTrailerIndex: 0
+      videoKey: ""
     }
   },
   methods: {
@@ -131,6 +139,9 @@ export default {
                 this.backdrop();
                 this.movieLoaded = true;
                 this.movie.cast = this.movie.cast.sort(() => .5 - Math.random()).slice(0, 8);
+                if(this.movie.videos.length > 0){
+                  this.videoKey = this.movie.videos[0].key;
+                }
                 document.title = this.movie.title;
             } else {
                 this.$router.push({name: '404'});
@@ -185,7 +196,7 @@ export default {
         }
     },
     trailerChangeTab(index){
-      this.showTrailerIndex = index;
+      this.videoKey = this.movie.videos[index].key;
     }
   },
   watch: {
@@ -586,7 +597,7 @@ export default {
   display: flex;
   justify-content: space-between;
   margin-top: 5px;
-  padding: 1px;
+  padding: 0px 1px 1px 0px;
   border: 1px solid $c-yellow;
   text-align: justify;
   border-radius: 10px;
@@ -595,6 +606,7 @@ export default {
     overflow: hidden;
     display: inline-block;
     width: 10%;
+    margin-right: 10px;
   }
   &__tablink{
     background-color: $c-dark-blue;
@@ -610,12 +622,23 @@ export default {
     border-left: none;
     border-top: none;
 
+    &-button{
+      background: transparent;
+      border: none;
+      color: $c-yellow;
+      cursor: pointer;
+    }
+
     &:first-child{
       border-radius: 10px 0px 0px 0px;
     }
 
     &:last-child{
       border-radius: 0px 0px 10px 0px;
+    }
+    
+    &:only-child{
+      border-radius: 10px 0px 10px 0px
     }
 
     &:hover{

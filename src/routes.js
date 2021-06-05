@@ -22,6 +22,13 @@ let routes = [
         components: {
             'page-router-view': require('./components/MoviePage.vue')
         }
+    },
+    {
+        name: 'user',
+        path: '/user/:id',
+        components: {
+            
+        }
     }
 ]
 

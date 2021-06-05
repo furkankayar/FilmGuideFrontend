@@ -1,9 +1,7 @@
 <template>
   <nav class="nav">
     <router-link class="nav__logo" :to="{ name: 'home' }" exact title="Film Guide App">
-        <svg class="nav__logo-image">
-            <use xlink:href="#svgLogo"></use>
-        </svg>
+        <img class="nav__logo-image" src="../assets/logo.png"/>
     </router-link>
     <div class="nav__hamburger" @click="toggleNav">
       <div class="bar"></div>
@@ -270,25 +268,24 @@ export default {
   }
   &__logo {
     display: block;
-    width: 55px;
-    height: 50px;
+    width: 100%;
+    height: 100%;
+    max-width: 60px;
     margin-right: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
     background: $c-dark-blue;
-    @include tablet-min {
-      width: 95px;
-      height: 75px;
-    }
+
     &-image {
-      width: 35px;
-      height: 31px;
+      width: 40px;
+      height: 40px;
+      max-width: 100px;
       fill: $c-yellow;
       transition: transform 0.5s ease;
       @include tablet-min {
-        width: 45px;
-        height: 40px;
+        width: 50px;
+        height: 50px;
       }
     }
     &:hover &-image {
