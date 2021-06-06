@@ -36,7 +36,14 @@ let routes = [
         components: {
             'page-router-view': require('./components/Profile.vue')
         }
-    }
+    },
+    {
+        name: 'search',
+        path: '/search/:query',
+        components: {
+          'page-router-view': require('./components/MoviesList.vue')
+        }
+      },
 ]
 
 const router = new VueRouter({

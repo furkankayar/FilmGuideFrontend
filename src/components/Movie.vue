@@ -215,6 +215,7 @@ export default {
                 this.backdrop();
                 this.movieLoaded = true;
                 this.movie.cast = this.movie.cast.sort(() => .5 - Math.random()).slice(0, 8);
+                this.movie.videos = this.movie.videos.slice(0, 5);
                 if(this.movie.videos.length > 0){
                   this.videoKey = this.movie.videos[0].key;
                 }
@@ -692,11 +693,15 @@ export default {
     outline: none;
     cursor: pointer;
     border: none;
-    padding: 10px 10px 10px 10px;
+    padding: 5px;
     transition: 0.3s;
     border: 1px solid $c-yellow;
     border-left: none;
     border-top: none;
+
+    @include tablet_min{
+      padding: 10px;
+    }
 
     &-button{
       background: transparent;
@@ -710,7 +715,7 @@ export default {
     }
 
     &:last-child{
-      border-radius: 0px 0px 10px 0px;
+      border-radius: 0px 0px 10px 10px;
     }
     
     &:only-child{

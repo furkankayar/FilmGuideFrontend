@@ -119,7 +119,7 @@ export default {
       }
     },
     search(){
-
+      this.$router.push({ name: 'search', params: { query: this.searchQuery }});
     },
     toggleNav() {
       document
@@ -457,11 +457,11 @@ export default {
       color: $c-yellow;
     }
     &.is-active {
-      color: $c-light;
+      color: $c-yellow;
       background: $c-dark-blue;
     }
     &.is-active &-icon {
-      fill: $c-light;
+      fill: $c-yellow;
     }
   }
 }

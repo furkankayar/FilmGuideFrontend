@@ -52,6 +52,7 @@ export default {
             let response = await api.addWatchlist(this.movie.id);
             if (response.status === 200){
                 this.movie.watchlisted = true;
+                eventHub.$emit("movie_watchlisted", this.movie.id);
             }
         }
         catch(error){
@@ -62,6 +63,7 @@ export default {
             let response = await api.removeWatchlist(this.movie.id);
             if (response.status === 200){
                 this.movie.watchlisted = false;
+                eventHub.$emit("movie_unwatchlisted", this.movie.id);
             }
         }
         catch(error){

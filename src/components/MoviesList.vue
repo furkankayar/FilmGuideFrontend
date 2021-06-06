@@ -52,25 +52,13 @@ export default {
       pages: '',
       results: '',
       currentPage: 1,
-      listLoaded: false
+      listLoaded: false,
+      routeCategory: ''
     }
   },
   computed: {
     pageTitle(){
       return this.listTitle + storage.pageTitlePostfix;
-    },
-    query(){
-      return this.$route.params.query || '';
-    },
-    request(){
-      if(this.mode == 'search'){
-        return `https://api.themoviedb.org/3/search/movie?api_key=${storage.apiKey}&language=en-US&query=${this.query}&page=${this.currentPage}`;
-      } else if(this.mode == 'collection') {
-        let caregory = this.$route.params.category || this.category;
-        return `https://api.themoviedb.org/3/movie/${caregory}?api_key=${storage.apiKey}&language=en-US&page=${this.currentPage}`;
-      } else if(this.mode == 'favorite') {
-        return `https://api.themoviedb.org/3/account/${storage.userId}/favorite/movies?api_key=${storage.apiKey}&session_id=${storage.sessionId}&language=en-US&sort_by=created_at.desc&page=${this.currentPage}`;
-      }
     },
     countResults(){
       if(this.results > 1){
@@ -81,9 +69,8 @@ export default {
     }
   },
   methods: {
-    fetchCategory(){
-      api.getTrendingMovies(this.currentPage)
-      .then(response => {
+    handleAPICall(promise){
+      promise.then(response => {
           let data = response.data;
           if(this.shortList){
               this.movies = data.results.slice(0, 8);
@@ -100,6 +87,29 @@ export default {
 
       });
     },
+    fetchCategory(){
+      let category = this.routeCategory == undefined ? this.category : this.routeCategory;
+
+      if(this.$route.params.query != undefined){
+        this.handleAPICall(api.searchMovies(this.$route.params.query));
+      }
+      else if(category == 'popular'){
+        this.handleAPICall(api.getTrendingMovies(this.currentPage));
+      }
+      else if(category == 'top_rated'){
+        this.handleAPICall(api.getTopRatedMovies(this.currentPage));
+      }
+      else if(category == 'upcoming'){
+        this.handleAPICall(api.getUpComingMovies(this.currentPage));
+      }
+      else if(category == 'now_playing'){
+        this.handleAPICall(api.getNowPlayingMovies(this.currentPage));
+      }
+      else{
+        this.handleAPICall(api.getTrendingMovies(this.currentPage));
+      }
+      
+    },
     loadMore(){
       this.currentPage++;
       api.getTrendingMovies(this.currentPage)
@@ -112,36 +122,8 @@ export default {
 
       });
     },
-    updateFavorite(){
-      if(this.mode == 'favorite'){
-        let promises = [], movies = [], pages, results;
-        for(let i = 1; i <= this.currentPage; i++){
-          promises.push(axios.get(`https://api.themoviedb.org/3/account/${storage.userId}/favorite/movies?api_key=${storage.apiKey}&session_id=${storage.sessionId}&language=en-US&sort_by=created_at.desc&page=${i}`))
-        }
-        axios.all(promises).then(function(results) {
-          results.forEach(function(resp) {
-            let data = resp.data;
-            movies = movies.concat(data.results);
-            pages = data.total_pages;
-            results = data.total_results;
-          });
-          this.movies = movies;
-          this.pages = pages;
-          if(this.currentPage > pages){
-            this.currentPage -= 1;
-          }
-          this.results = results;
-        }.bind(this));
-      }
-    }
-  },
-  watch: {
-    query(value){
-      this.fetchCategory(value);
-    }
-  },
-  created(){
-    // Set List Title
+    init(){
+      // Set List Title
     /*if(this.mode == 'collection') {
       let caregory = this.$route.params.category || this.category;
       this.listTitle = storage.categories[caregory];
@@ -155,8 +137,34 @@ export default {
     } else if(this.mode == 'favorite') {
       this.listTitle = storage.categories['favorite'];
     }
+    this.routeCategory = this.$route.params.category;
     this.fetchCategory();
-    eventHub.$on('updateFavorite', this.updateFavorite);
+
+    eventHub.$on('movie_watchlisted', movieId =>{
+      this.movies.forEach(movie => {
+        if(movie.id === movieId){
+          movie.watchlisted = true;
+        }
+      });
+    });
+
+    eventHub.$on('movie_unwatchlisted', movieId =>{
+      this.movies.forEach(movie => {
+        if(movie.id === movieId){
+          movie.watchlisted = false;
+        }
+      });
+    });
+    }
+  },
+  watch: {
+    '$route':{
+        handler: 'init',
+        immediate: true
+    }
+  },
+  created(){
+    this.init(); 
   }
 }
 </script>

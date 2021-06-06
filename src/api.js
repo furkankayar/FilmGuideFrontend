@@ -74,6 +74,18 @@ export default{
     async getTrendingMovies(page){
         return this.execute('get', '/movie/trending' + (page ? '?page=' + page : ''), {});
     },
+    async getTopRatedMovies(page){
+        return this.execute('get', '/movie/top_rated' + (page ? '?page=' + page : ''), {});
+    },
+    async getUpComingMovies(page){
+        return this.execute('get', '/movie/upcoming' + (page ? '?page=' + page : ''), {});
+    },
+    async getNowPlayingMovies(page){
+        return this.execute('get', '/movie/now_playing' + (page ? '?page=' + page : ''), {});
+    },
+    async searchMovies(query){
+        return this.execute('get', '/movie/search' + "?query=" + query, {});
+    },
     async addWatchlist(movieId){
         return this.execute('post', '/movie/' + movieId + '/addWatchlist', {});
     },

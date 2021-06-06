@@ -22,7 +22,7 @@
                          | by
                     </span>
                     <span class="review__reviewer">
-                        <router-link :to="{name: 'user', params: {id: review.user.id}}">
+                        <router-link :to="{name: 'user', params: {username: review.user.username}}">
                             {{ review.user.username }}
                         </router-link>
                     </span>
