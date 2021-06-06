@@ -107,6 +107,7 @@ export default {
         if(response.status === 200){
           this.userAuthenticated = true;
           this.userNotAuthenticated = false;
+          localStorage.setItem("username", response.data.username);
         } else {
           this.userNotAuthenticated = true;
           this.userAuthenticated = false;

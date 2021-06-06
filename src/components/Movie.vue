@@ -88,7 +88,7 @@
                   Reviews
                 </h2>
                 <ul class="review__list">
-                  <review :review="review"/>
+                  <review v-for="item in movie.reviews" :reviewProp="item"/>
                 </ul>
                 <div v-if="!showForm" class="review__text" @click="showForm = true">
                   Review this movie
@@ -171,17 +171,7 @@ export default {
       reviewRating: 0,
       showError: false,
       errorLabelText: "",
-      showForm: false,
-      review: {
-        id: 223,
-        rate: 7,
-        title: "Still trying to absorb what I've seen",
-        content: "Going into this movie I had one wish: To leave feeling that it was a successful conclusion to a two-part film. Taking Reloaded/Revolutions as a single (very large) movie with an intermission is the best way to evaluate it. Viewed that way I think it succeeded. I thought Revolutions was the equal of Reloaded, yet I can see how many will think it failed. The ending gave us everything we needed to know, but did not show us all we wanted to see. I'm speaking of the last twenty minutes or so here. After a visually robust middle, in which I felt my eyes grow larger in their sockets more than once, the ending seemed like an anticlimax. It needed to be longer, and I would gladly have traded some of the fx flair used earlier to give the final part of the film it's justified due. It will be awhile before",
-        user: "furkankayar",
-        date: "12.02.2021",
-        liked: false,
-        likeCount: 11
-      }
+      showForm: false
     }
   },
   methods: {
@@ -198,10 +188,22 @@ export default {
       }
       else{
         this.showError = false;
+        api.sendReview(this.id, {
+          title: this.reviewTitle,
+          content: this.reviewContent,
+          rating: this.reviewRating
+        })
+        .then(response => {
+          if(response.status === 200){
+            this.movie = {};
+            this.reviewTitle = "";
+            this.reviewContent = "";
+            this.reviewRating = 0;
+            this.showForm = false;
+            this.fetchMovie(this.id);
+          }
+        })
       }
-      console.log(this.reviewTitle);
-      console.log(this.reviewContent);
-      console.log(this.reviewRating);
     },
     fetchMovie(id){
         api.getMovie(id)

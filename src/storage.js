@@ -2,6 +2,7 @@ let storage = {
     apiKey: '6b080614b119a4a88bc82be6b2eeca68',
     sessionId: localStorage.getItem('session_id') || null,
     userId: localStorage.getItem('user_id') || null,
+    username: localStorage.getItem('username') || null,
     pageTitlePostfix: ' — ' + document.title,
     listTypes: [
       {

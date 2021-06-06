@@ -25,9 +25,16 @@ let routes = [
     },
     {
         name: 'user',
-        path: '/user/:id',
+        path: '/user/:username',
         components: {
-            
+            'page-router-view': require('./components/Profile.vue') 
+        }
+    },
+    {
+        name: 'profile',
+        path: '/profile',
+        components: {
+            'page-router-view': require('./components/Profile.vue')
         }
     }
 ]

@@ -16,8 +16,8 @@
           <p class="movies-item__date">{{ movie.release_date.substring(0, 4) }}</p>
           <p class="movies-item__lang">{{ movie.original_language.toUpperCase() }}</p>
         </router-link>
-        <button v-if="!movie.watchlisted" class="movies-item__watchlist-button" @click="addWatchlist"><span style="margin-right: 5px; font-size:110%;">&plus;</span>Watchlist</button>
-        <button v-if="movie.watchlisted" class="movies-item__watchlist-button-activated" @click="removeWatchlist"><span style="margin-right: 5px; font-size:110%;">&check;</span>Watchlisted</button>
+        <button v-if="!movie.watchlisted && showButton" class="movies-item__watchlist-button" @click="addWatchlist"><span style="margin-right: 5px; font-size:110%;">&plus;</span>Watchlist</button>
+        <button v-if="movie.watchlisted && showButton" class="movies-item__watchlist-button-activated" @click="removeWatchlist"><span style="margin-right: 5px; font-size:110%;">&check;</span>Watchlisted</button>
       </div>
   </li>
 </template>
@@ -27,7 +27,7 @@ import img from '../directives/v-image.js';
 import api from '../api.js';
 
 export default {
-  props: ['movie'],
+  props: ['movie', 'showButton'],
   directives: {
     img: img
   },

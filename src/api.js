@@ -82,5 +82,14 @@ export default{
     },
     async getMovie(movieId){
         return this.execute('get', '/movie/' + movieId, {});
+    },
+    async sendReview(movieId, data){
+        return this.execute('post', '/movie/' + movieId + '/review', data);
+    },
+    async likeReview(reviewId){
+        return this.execute('post', '/movie/' + reviewId + '/like', {});
+    },
+    async getWatchlist(username){
+        return this.execute('get', '/user/' + username + '/watchlist', {});
     }
 }

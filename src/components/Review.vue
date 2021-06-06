@@ -22,8 +22,8 @@
                          | by
                     </span>
                     <span class="review__reviewer">
-                        <router-link :to="{name: 'user', params: {id: review.id}}">
-                            {{ review.user }}
+                        <router-link :to="{name: 'user', params: {id: review.user.id}}">
+                            {{ review.user.username }}
                         </router-link>
                     </span>
                 </div>
@@ -39,19 +39,29 @@
 
 <script>
 
+import api from '../api'
+
 export default{
-    props: ['review'],
+    props: ['reviewProp'],
     data(){
         return{
-            
+            review: {}
         }
+    },
+    beforeMount(){
+        this.review = this.reviewProp;
     },
     methods:{
         isStarColored(key){
-            return key <= this.review.rate
+            return key <= this.review.rating
         },
         likeComment(){
-            this.review.liked = !this.review.liked
+            api.likeReview(this.review.id)
+            .then(response => {
+                if(response.status === 200){
+                    this.review = response.data.review;
+                }
+            })
         }
     }
 }
