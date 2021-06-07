@@ -10,7 +10,7 @@
         </router-link>
       </header>
       <ul class="movies__list">
-        <movies-list-item class="movies__item" v-for="(movie, index) in movies" :movie="movie" :showButton="true"></movies-list-item>
+        <movies-list-item class="movies__item" v-for="(movie, index) in movies" :movie="movie" :showButton="showButton || showButtonFromRouter"></movies-list-item>
       </ul>
       <div class="movies__nav" v-if="!shortList" :class="{'is-hidden' : currentPage == pages}">
         <button @click="loadMore" class="button">Load More</button>
@@ -37,7 +37,7 @@ import MoviesListItem from './MoviesListItem.vue'
 let removed;
 
 export default {
-  props: ['type', 'mode', 'category', 'shortList'],
+  props: ['type', 'mode', 'category', 'shortList', 'showButton'],
   components: { MoviesListItem },
   beforeRouteLeave (to, from, next) {
     if(from.name == 'search'){
@@ -53,7 +53,9 @@ export default {
       results: '',
       currentPage: 1,
       listLoaded: false,
-      routeCategory: ''
+      routeCategory: '',
+      query: '',
+      showButtonFromRouter: false
     }
   },
   computed: {
@@ -73,7 +75,7 @@ export default {
       promise.then(response => {
           let data = response.data;
           if(this.shortList){
-              this.movies = data.results.slice(0, 8);
+              this.movies = data.results.slice(0, 10);
               this.pages = 1;
               this.results = 5;
           } else {
@@ -89,9 +91,11 @@ export default {
     },
     fetchCategory(){
       let category = this.routeCategory == undefined ? this.category : this.routeCategory;
-
-      if(this.$route.params.query != undefined){
-        this.handleAPICall(api.searchMovies(this.$route.params.query));
+      this.query = this.$route.params.query;
+      if(this.query != undefined){
+        this.listTitle = "Results for '"+ this.query +"'";
+        this.handleAPICall(api.searchMovies(this.query));
+        
       }
       else if(category == 'popular'){
         this.handleAPICall(api.getTrendingMovies(this.currentPage));
@@ -110,17 +114,34 @@ export default {
       }
       
     },
-    loadMore(){
-      this.currentPage++;
-      api.getTrendingMovies(this.currentPage)
-      .then(response => {
+    handleLoadMoreCall(promise){
+      promise.then(response => {
         let data = response.data;
         let newData = this.movies.concat(data.results);
         this.movies = newData;
-      })
-      .catch(error => {
-
-      });
+      }).catch(error => {});
+    },
+    loadMore(){
+      let category = this.routeCategory == undefined ? this.category : this.routeCategory;
+      this.currentPage++;
+      if(this.query != undefined){
+        this.handleLoadMoreCall(api.searchMovies(this.query));
+      }
+      else if(category == 'popular'){
+        this.handleLoadMoreCall(api.getTrendingMovies(this.currentPage));
+      }
+      else if(category == 'top_rated'){
+        this.handleLoadMoreCall(api.getTopRatedMovies(this.currentPage));
+      }
+      else if(category == 'upcoming'){
+        this.handleLoadMoreCall(api.getUpComingMovies(this.currentPage));
+      }
+      else if(category == 'now_playing'){
+        this.handleLoadMoreCall(api.getNowPlayingMovies(this.currentPage));
+      }
+      else{
+        this.handleLoadMoreCall(api.getTrendingMovies(this.currentPage));
+      }
     },
     init(){
       // Set List Title
@@ -165,6 +186,12 @@ export default {
   },
   created(){
     this.init(); 
+    this.showButtonFromRouter = this.$route.params.showButton;
+  },
+  destroyed(){
+    if(this.query != undefined){
+      eventHub.$emit("cleanQuery");
+    }
   }
 }
 </script>
@@ -236,10 +263,10 @@ export default {
           width: calc(100%/4 - 20px);
       }
       @include tablet-landscape-min{
-        width: calc(100%/4 - 20px);
+        width: calc(100%/5 - 20px);
       }
       @include desktop-min{
-        width: calc(100%/8 - 20px);
+        width: calc(100%/10 - 20px);
       }
     }
     &__nav{

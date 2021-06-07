@@ -48,7 +48,6 @@ export default{
         }
 
         if(!returnValue){
-            console.log("çalıştı");
             returnValue = await axios({
                 method: method,
                 headers:{
@@ -67,6 +66,9 @@ export default{
     },
     async register(data){
         return this.execute('post', '/auth/register', data);
+    },
+    async logout(){
+        return this.execute('post', '/auth/logout', {});
     },
     async whoami(){
         return this.execute('get', '/auth/whoami', {});

@@ -46,7 +46,7 @@ export default {
     closeLoginPopup(){
       this.loginPopupIsVisible = false;
       document.querySelector('body').classList.remove('hidden');
-      window.history.back();
+
     },
     openRegisterPopup(){
       this.registerPopupIsVisible = true;
@@ -55,7 +55,7 @@ export default {
     closeRegisterPopup(){
       this.registerPopupIsVisible = false;
       document.querySelector('body').classList.remove('hidden');
-      window.history.back();
+
     }
   },
   created(){

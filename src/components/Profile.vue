@@ -12,7 +12,6 @@
     <i v-if="!listLoaded" class="loader"></i>
     <section v-if="!movies.length" class="not-found">
       <div class="not-found__content">
-        <h2 class="not-found__title" v-if="mode == 'favorite'">You haven't added any favorite movies</h2>
       </div>
     </section>
   </div>
@@ -30,12 +29,6 @@ let removed;
 
 export default {
   components: { MoviesListItem },
-  beforeRouteLeave (to, from, next) {
-    if(from.name == 'search'){
-      eventHub.$emit('setSearchQuery', true);
-    }
-    next();
-  },
   data() {
     return {
       listTitle: '',
@@ -62,16 +55,9 @@ export default {
     }
   },
   methods: {
-    fetchWatchlist(){
-      api.getWatchlist(this.username)
-      .then(response => {
-          let data = response.data;
-          this.movies = data.watchlist;
-          this.listLoaded = true;
-      })
-      .catch(error => {
-          console.log(error.response);
-      });
+    fetchWatchlist(data){
+      this.movies = data.watchlist;
+      this.listLoaded = true;
     },
     init(){
         this.showButton = false;
@@ -83,8 +69,7 @@ export default {
         } else {
             this.username = localStorage.getItem("username")
         }
-    
-        this.fetchWatchlist();
+        this.fetchWatchlist(this.$route.params.watchlist);
     }
   },
   watch: {
@@ -166,10 +151,10 @@ export default {
           width: calc(100%/4 - 20px);
       }
       @include tablet-landscape-min{
-        width: calc(100%/4 - 20px);
+        width: calc(100%/5 - 20px);
       }
       @include desktop-min{
-        width: calc(100%/8 - 20px);
+        width: calc(100%/10 - 20px);
       }
     }
     &__nav{

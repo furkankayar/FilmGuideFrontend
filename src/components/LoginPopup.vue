@@ -61,6 +61,7 @@ export default {
           if(response.status === 200){
             eventHub.$emit('setUserStatus');
             eventHub.$emit('closeLoginPopup');
+            window.location = "/";
           } else {
             this.showError = true;
             this.errorLabelText = "An error occurred!";
@@ -156,15 +157,17 @@ export default {
       width: 20px;
       height: 2px;
       background: $c-white;
+      
     }
     &:before{
       transform: rotate(45deg);
+      
     }
     &:after{
       transform: rotate(-45deg);
     }
     &:hover{
-      background: $c-yellow;
+      background-color: $c-yellow;
     }
   }
 }

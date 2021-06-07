@@ -1,5 +1,5 @@
 import VueRouter from 'vue-router';
-
+import api from './api'; 
 
 let routes = [
     {
@@ -7,6 +7,23 @@ let routes = [
         path: '/',
         components: {
             'list-router-view': require('./components/Home.vue')
+        },
+        beforeEnter: (to, from, next) => {
+            api.whoami()
+            .then(response => {
+                if(response.status === 200){
+                    to.params.showButton = true;
+                    next();
+                }
+                else{
+                    to.params.showButton = false;
+                    next();
+                }
+            })
+            .catch(error => {
+                to.params.showButton = false;
+                next();
+            });
         }
     },
     {
@@ -14,6 +31,23 @@ let routes = [
         path: '/movies/:category',
         components: {
             'list-router-view': require('./components/MoviesList.vue')
+        },
+        beforeEnter: (to, from, next) => {
+            api.whoami()
+            .then(response => {
+                if(response.status === 200){
+                    to.params.showButton = true;
+                    next();
+                }
+                else{
+                    to.params.showButton = false;
+                    next();
+                }
+            })
+            .catch(error => {
+                to.params.showButton = false;
+                next();
+            });
         }
     },
     {
@@ -21,6 +55,20 @@ let routes = [
         path: '/movie/:id',
         components: {
             'page-router-view': require('./components/MoviePage.vue')
+        },
+        beforeEnter: (to, from, next) => {
+            api.getMovie(to.params.id)
+            .then(response =>{
+                if(response.status === 200){
+                    to.params.movie = response.data;
+                    next();
+                }
+            })
+            .catch(error => {
+                if(error.response.status === 403){
+                    eventHub.$emit("openLoginPopup");
+                }
+            })
         }
     },
     {
@@ -28,6 +76,20 @@ let routes = [
         path: '/user/:username',
         components: {
             'page-router-view': require('./components/Profile.vue') 
+        },
+        beforeEnter: (to, from, next) => {
+            api.getWatchlist(to.params.username)
+            .then(response => {
+                if(response.status === 200){
+                    to.params.watchlist = response.data;
+                    next();
+                }
+            })
+            .catch(error => {
+                if(error.response.status === 403){
+                    next("/");
+                }
+            })
         }
     },
     {
@@ -35,6 +97,20 @@ let routes = [
         path: '/profile',
         components: {
             'page-router-view': require('./components/Profile.vue')
+        },
+        beforeEnter: (to, from, next) => {
+            api.getWatchlist(localStorage.getItem("username"))
+            .then(response => {
+                if(response.status === 200){
+                    to.params.watchlist = response.data;
+                    next();
+                }
+            })
+            .catch(error => {
+                if(error.response.status === 403){
+                    next("/");
+                }
+            })
         }
     },
     {

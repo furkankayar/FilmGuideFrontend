@@ -148,7 +148,7 @@ import formatDate from '../directives/v-formatDate.js'
 import Review from './Review.vue'
 
 export default {
-  props: ['id', 'type'],
+  props: ['type'],
   directives: {
     img: img,
     formatDate: formatDate
@@ -188,46 +188,47 @@ export default {
       }
       else{
         this.showError = false;
-        api.sendReview(this.id, {
+        console.log(this.movie);
+        api.sendReview(this.movie.movie_id, {
           title: this.reviewTitle,
           content: this.reviewContent,
           rating: this.reviewRating
         })
         .then(response => {
           if(response.status === 200){
+            let id = this.movie.movie_id;
             this.movie = {};
             this.reviewTitle = "";
             this.reviewContent = "";
             this.reviewRating = 0;
             this.showForm = false;
-            this.fetchMovie(this.id);
+            this.fetchMovie(id);
           }
         })
       }
     },
     fetchMovie(id){
-        api.getMovie(id)
-        .then(response => {
-            if(response.status === 200){
-                let movie = response.data;
-                this.movie = movie;
-                this.poster();
-                this.backdrop();
-                this.movieLoaded = true;
-                this.movie.cast = this.movie.cast.sort(() => .5 - Math.random()).slice(0, 8);
-                this.movie.videos = this.movie.videos.slice(0, 5);
-                if(this.movie.videos.length > 0){
-                  this.videoKey = this.movie.videos[0].key;
-                }
-                document.title = this.movie.title;
-            } else {
-                this.$router.push({name: '404'});
-            }
-            
-        })
-        .catch(error => {
-            this.$router.push({ name: '404' });
-        });
+      api.getMovie(id)
+      .then(response => {
+        if(response.status == 200){
+          this.movie = response.data;
+          this.initMovie();
+        }
+      })
+      .catch(error => {});
+    },
+    initMovie(){
+      this.poster();
+      this.backdrop();
+      console.log(this.movie.cast);
+      this.movie.cast = this.movie.cast.slice(0, 8);
+      this.movie.videos = this.movie.videos.slice(0, 5);
+      this.movieLoaded = true;
+
+      if(this.movie.videos.length > 0){
+        this.videoKey = this.movie.videos[0].key;
+      }
+      document.title = this.movie.title;  
     },
     personPoster(person) {
       if(person.profilePath){
@@ -282,7 +283,8 @@ export default {
     }
   },
   created(){
-    this.fetchMovie(this.id);
+    this.movie = this.$route.params.movie;
+    this.initMovie();
   }
 }
 </script>

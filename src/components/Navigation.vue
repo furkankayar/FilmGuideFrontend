@@ -64,6 +64,16 @@
                     </div>
                 </router-link>
             </li>
+            <li class="nav__item">
+                <a  class="nav__link" :href="'/'" @click.prevent="logout()" >
+                    <div class="nav__link-wrap">
+                        <svg class="nav__link-icon">
+                            <use :xlink:href="'#iconLogout'"></use>
+                        </svg>
+                        <span class="nav__link-title">Logout</span>
+                    </div>
+                </a>
+            </li>
         </ul>
     </div>   
       <!--<li class="nav__item nav__item--profile">
@@ -135,11 +145,26 @@ export default {
     },
     openRegisterPopup(){
       eventHub.$emit('openRegisterPopup');
+    },
+    logout(){
+      api.logout()
+      .then(response => {
+        if(response.status == 200){
+          this.userAuthenticated = false;
+          this.userNotAuthenticated = true;
+          window.location = "/";
+        }
+      })
+      .catch(error => {
+
+      });
     }
   },
   mounted(){
     eventHub.$on('setUserStatus', this.setUserStatus)
-
+    eventHub.$on('cleanQuery', () => {
+      this.searchQuery = "";
+    });
   },
   created() {
     this.setUserStatus();

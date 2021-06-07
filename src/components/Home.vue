@@ -6,7 +6,7 @@
         <strong class="home__header-subtitle">Made with Vue.js</strong>-->
       </div>
     </header>
-    <movies-list v-for="item in listTypes" v-if="item.isCategory" :type="'component'" :mode="'collection'" :category="item.query" :shortList="true"></movies-list>
+    <movies-list v-for="item in listTypes" v-if="item.isCategory" :type="'component'" :showButton="showButton" :mode="'collection'" :category="item.query" :shortList="true"></movies-list>
   </section>
 </template>
 
@@ -20,8 +20,15 @@ export default {
   },
   data: function(){
     return {
-      listTypes: storage.listTypes
+      listTypes: storage.listTypes,
+      showButton: false
     }
+  },
+  mounted(){
+    if(this.$route.params.showLogin){
+      eventHub.$emit('openLoginPopup');
+    }
+    this.showButton = this.$route.params.showButton;
   }
 };
 </script>
