@@ -1,21 +1,21 @@
 <template>
   <li class="movies-item">
     
-    <router-link class="movies-item__link" :class="{'no-image': noImage}" :to="{name: 'movie', params: {id: movie.id}}">
+    <a class="movies-item__link" :class="{'no-image': noImage}" :href="'/movie/' + movie.id">
 
       <figure class="movies-item__poster">
         <img v-if="!noImage" class="movies-item__img" src="~assets/placeholder.png" v-img="poster()" alt="">
         <img v-if="noImage" class="movies-item__img is-loaded" src="~assets/no-image.png" alt="">
       </figure>
-    </router-link>
+    </a>
 
       <div class="movies-item__content">
-        <router-link class="movies-item__link" :class="{'no-image': noImage}" :to="{name: 'movie', params: {id: movie.id}}">
+        <a class="movies-item__link" :class="{'no-image': noImage}" :href="'/movie/' + movie.id">
           <p class="movies-item__vote"><span class="movies-item__star">&starf;</span>{{ movie.vote_average }}</p>
           <p class="movies-item__title">{{ movie.title }}</p>
           <p class="movies-item__date">{{ movie.release_date.substring(0, 4) }}</p>
           <p class="movies-item__lang">{{ movie.original_language.toUpperCase() }}</p>
-        </router-link>
+        </a>
         <button v-if="!movie.watchlisted && showButton" class="movies-item__watchlist-button" @click="addWatchlist"><span style="margin-right: 5px; font-size:110%;">&plus;</span>Watchlist</button>
         <button v-if="movie.watchlisted && showButton" class="movies-item__watchlist-button-activated" @click="removeWatchlist"><span style="margin-right: 5px; font-size:110%;">&check;</span>Watchlisted</button>
       </div>
@@ -27,7 +27,7 @@ import img from '../directives/v-image.js';
 import api from '../api.js';
 
 export default {
-  name: 'MovieListItem',
+  name: 'SimilarMovieItem',
   props: ['movie', 'showButton'],
   directives: {
     img: img

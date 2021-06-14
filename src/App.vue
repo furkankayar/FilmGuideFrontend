@@ -30,6 +30,7 @@ export default {
     return {
       loginPopupIsVisible: false,
       registerPopupIsVisible: false,
+      lastTitle: 'Film Guide'
     }
   },
   methods: {
@@ -42,20 +43,24 @@ export default {
     openLoginPopup(){
       this.loginPopupIsVisible = true;
       document.querySelector('body').classList.add('hidden');
+      this.lastTitle = document.title;
+      document.title = 'Login | Film Guide';
     },
     closeLoginPopup(){
       this.loginPopupIsVisible = false;
       document.querySelector('body').classList.remove('hidden');
-
+      document.title = this.lastTitle;
     },
     openRegisterPopup(){
       this.registerPopupIsVisible = true;
       document.querySelector('body').classList.add('hidden');
+      this.lastTitle = document.title;
+      document.title = 'Register | Film Guide';
     },
     closeRegisterPopup(){
       this.registerPopupIsVisible = false;
       document.querySelector('body').classList.remove('hidden');
-
+      document.title = this.lastTitle;
     }
   },
   created(){

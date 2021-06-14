@@ -29,6 +29,7 @@ export default {
       eventHub.$emit('openLoginPopup');
     }
     this.showButton = this.$route.params.showButton;
+    document.title = 'Film Guide'
   }
 };
 </script>

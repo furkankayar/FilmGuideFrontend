@@ -1,12 +1,32 @@
 <template>
   <div class="container info">
-    <movie :id="$route.params.id" :type="'page'"></movie>
+    <movie :id="id" :type="'page'"></movie>
   </div>
 </template>
 
 <script>
 import Movie from './Movie.vue';
 export default {
-  components: { Movie }
+  name: 'MoviePage',
+  components: { Movie },
+  data(){
+    return {
+      id: 0
+    }
+  },
+  methods: {
+    init(){
+      this.id = this.$route.params.id;
+    }
+  },
+  watch: {
+    '$route':{
+        handler: 'init',
+        immediate: true
+    }
+  },
+  created(){
+    this.init();
+  }
 }
 </script>

@@ -80,6 +80,7 @@ export default {
   },
   created(){
     this.init();
+    document.title = 'Profile | Film Guide';
   }
 }
 </script>

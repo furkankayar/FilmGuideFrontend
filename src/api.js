@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-axios.defaults.baseURL = 'https://film-guide-backend.herokuapp.com/'
-//axios.defaults.baseURL = 'http://localhost:7000'
+//axios.defaults.baseURL = 'https://film-guide-backend.herokuapp.com/'
+axios.defaults.baseURL = 'http://localhost:7000'
 
 export default{
     async execute(method, resource, body){

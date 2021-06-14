@@ -76,15 +76,23 @@
                   </div>
                   
                   <div class="trailer__tabcontent">
-                    <iframe class="trailer__video"
+                    <iframe class="trailer__video" allowfullscreen="true"
                       :src="'https://www.youtube.com/embed/' + videoKey">
                     </iframe> 
                   </div>
                 
                 </div>
               </div>
-              <div class="movie__details-block">
+              <div v-if="movie.similar_movies.length > 0" class="movie__details-block">
                 <h2 class="movie__details-title">
+                  Similar Movies
+                </h2>
+                <ul class="movies__similar-list">
+                  <similar-movie-item class="movies__similar-item" v-for="(movie, index) in movie.similar_movies" :movie="movie" :showButton="false"></similar-movie-item>
+                </ul>
+              </div>
+              <div class="movie__details-block">
+                <h2 v-if="this.movie.reviews.length > 0" class="movie__details-title">
                   Reviews
                 </h2>
                 <ul class="review__list">
@@ -146,15 +154,18 @@ import storage from '../storage.js'
 import img from '../directives/v-image.js'
 import formatDate from '../directives/v-formatDate.js'
 import Review from './Review.vue'
+import SimilarMovieItem from './SimilarMovieItem.vue'
 
 export default {
+  name: 'Movie',
   props: ['type'],
   directives: {
     img: img,
     formatDate: formatDate
   },
   components: {
-    Review
+    'review': Review, 
+    'similar-movie-item': SimilarMovieItem
   },
   data(){
     return{
@@ -220,15 +231,15 @@ export default {
     initMovie(){
       this.poster();
       this.backdrop();
-      console.log(this.movie.cast);
       this.movie.cast = this.movie.cast.slice(0, 8);
       this.movie.videos = this.movie.videos.slice(0, 5);
+      this.movie.similar_movies = this.movie.similar_movies.slice(0, 10);
       this.movieLoaded = true;
 
       if(this.movie.videos.length > 0){
         this.videoKey = this.movie.videos[0].key;
       }
-      document.title = this.movie.title;  
+      document.title = this.movie.title + " | Film Guide";  
     },
     personPoster(person) {
       if(person.profilePath){
@@ -418,6 +429,11 @@ export default {
       }
       @include desktop-min{
         margin-top: calc(33% - 240px);
+      }
+      @include mobile_only{
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
       }
       &-link{
         display: flex;
@@ -758,6 +774,7 @@ export default {
   }
   &__text{
     font-size: 14px;
+    text-align: center;
     color: $c-yellow;
     cursor: pointer;
     &:hover{
@@ -859,5 +876,29 @@ export default {
 .rate > label:hover ~ input:checked ~ label {
     color: #c59b08;
 }
+
+.movies{
+  &__similar-list{
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+  }
+    &__similar-item{
+      margin: 10px;
+      width: 50%;
+      @include tablet-min{
+          width: calc(100%/2 - 20px) !important;
+      }
+      @include tablet-landscape-min{
+        width: calc(100%/2 - 20px) !important;
+      }
+      @include desktop-min{
+        width: calc(100%/5 - 20px) !important;
+      }
+    }
+}
+
 
 </style>

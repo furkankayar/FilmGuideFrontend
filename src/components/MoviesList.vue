@@ -95,7 +95,7 @@ export default {
       if(this.query != undefined){
         this.listTitle = "Results for '"+ this.query +"'";
         this.handleAPICall(api.searchMovies(this.query));
-        
+        document.title = 'Search Results | Film Guide';
       }
       else if(category == 'popular'){
         this.handleAPICall(api.getTrendingMovies(this.currentPage));
@@ -187,6 +187,13 @@ export default {
   created(){
     this.init(); 
     this.showButtonFromRouter = this.$route.params.showButton;
+    switch(this.$route.params.category){
+      case 'popular': document.title = 'Popular Movies | Film Guide'; break;
+      case 'top_rated': document.title = 'Top Rated Movies | Film Guide'; break;
+      case 'upcoming': document.title = 'Upcoming Movies | Film Guide'; break;
+      case 'now_playing': document.title = 'Now Playing Movies | Film Guide'; break;
+      default: 'Film Guide';
+    }
   },
   destroyed(){
     if(this.query != undefined){
