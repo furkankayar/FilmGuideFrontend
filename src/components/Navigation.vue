@@ -11,7 +11,7 @@
     <div class="nav__left">
         <ul class="nav__list">
             <li class="nav__item" v-for="item in listTypes" v-if="item.isCategory">
-                <router-link class="nav__link" :to="{ name: 'home-category', params: { category: item.query } }">
+                <router-link class="nav__link" :to="{ name: 'home-category', params: { category: item.query, showButton: true } }">
                     <div class="nav__link-wrap">
                         <svg class="nav__link-icon">
                             <use :xlink:href="'#icon_' + item.query"></use>
@@ -22,7 +22,7 @@
             </li>
         </ul>
     </div>
-    <div class="nav__center">
+    <div v-if="userAuthenticated" class="nav__center">
         <input class="nav__center-input" type="text" v-model.trim="searchQuery" @keyup.enter="search" @blur="search" placeholder="Search for a movie...">
         <svg class="nav__center-icon">
           <use xlink:href="#iconSearch"></use>
@@ -129,7 +129,7 @@ export default {
       }
     },
     search(){
-      this.$router.push({ name: 'search', params: { query: this.searchQuery }});
+      this.$router.push({ name: 'search', params: { query: this.searchQuery, showButton: true }});
     },
     toggleNav() {
       document
@@ -202,6 +202,7 @@ export default {
       text-align: center;
       right: 0;
       top: 0;
+      margin-left: auto;
       margin-right: 20px;
       height: 75px;
       @include mobile_only{

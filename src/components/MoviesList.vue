@@ -192,7 +192,7 @@ export default {
       case 'top_rated': document.title = 'Top Rated Movies | Film Guide'; break;
       case 'upcoming': document.title = 'Upcoming Movies | Film Guide'; break;
       case 'now_playing': document.title = 'Now Playing Movies | Film Guide'; break;
-      default: 'Film Guide';
+      default: 'Film Guide'; break;
     }
   },
   destroyed(){

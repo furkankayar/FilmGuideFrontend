@@ -118,6 +118,23 @@ let routes = [
         path: '/search/:query',
         components: {
           'page-router-view': require('./components/MoviesList.vue')
+        },
+        beforeEnter: (to, from, next) => {
+            api.whoami()
+            .then(response => {
+                if(response.status === 200){
+                    to.params.showButton = true;
+                    next();
+                }
+                else{
+                    to.params.showButton = false;
+                    next();
+                }
+            })
+            .catch(error => {
+                to.params.showButton = false;
+                next();
+            });
         }
       },
 ]
